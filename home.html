@@ -1,0 +1,3005 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0" />
+  <meta name="theme-color" content="#070719" />
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👩🏼‍❤️‍👨🏻</text></svg>">
+  <title>The Book of Us — For Rahma</title>
+
+  <!-- External Fonts & Scripts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* =========================================================
+       1. CORE SYSTEM & THEME VARIABLES
+       ========================================================= */
+    :root {
+      --bg-dark: #070614;
+      --bg-card: rgba(255, 255, 255, 0.05);
+      --border-light: rgba(255, 255, 255, 0.12);
+      --pink: #ff4fb3;
+      --purple: #9b6cff;
+      --cyan: #55e8ff;
+      --gold: #f3c77c;
+      --gold-dark: #b8860b;
+      --text-main: #f8f4ff;
+      --text-muted: #aaa3bd;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --shadow-glow: 0 10px 40px rgba(255, 79, 179, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-dark);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-main);
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      background: radial-gradient(circle at 20% 15%, rgba(155, 108, 255, 0.22), transparent 40%),
+                  radial-gradient(circle at 80% 30%, rgba(255, 79, 179, 0.18), transparent 35%),
+                  radial-gradient(circle at 50% 85%, rgba(85, 232, 255, 0.12), transparent 45%),
+                  linear-gradient(160deg, #050512, #0d0924 50%, #180c33);
+      background-attachment: fixed;
+    }
+
+    /* Grid Overlay Pattern */
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Floating Ambient Elements */
+    #floating-container {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .floating-item {
+      position: absolute;
+      bottom: -60px;
+      user-select: none;
+      animation: floatUp linear infinite;
+      filter: drop-shadow(0 0 8px rgba(255, 79, 179, 0.5));
+      opacity: 0.85;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+      15% { opacity: 0.9; }
+      85% { opacity: 0.9; }
+      100% { transform: translateY(-115vh) rotate(360deg) scale(1.2); opacity: 0; }
+    }
+
+    /* =========================================================
+       2. LAYOUT & GLASS CARDS
+       ========================================================= */
+    .app-container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 20px max(18px, env(safe-area-inset-left)) calc(60px + env(safe-area-inset-bottom));
+      position: relative;
+      z-index: 2;
+    }
+
+    .glass {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Toast Notification Banner */
+    .toast-banner {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: linear-gradient(135deg, rgba(255, 79, 179, 0.95), rgba(155, 108, 255, 0.95));
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 99px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(255, 79, 179, 0.5);
+      z-index: 10000;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toast-banner.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* =========================================================
+       3. HERO SECTION
+       ========================================================= */
+    .hero {
+      min-height: 75vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      border-radius: 99px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.06);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #e2d9f3;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(155, 108, 255, 0.2);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 7vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 18px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(110deg, #ffffff, #ff8cd0 35%, #a485ff 70%, #62efff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin-bottom: 30px;
+    }
+
+    .scroll-hint {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-8px); }
+      60% { transform: translateY(-4px); }
+    }
+
+    /* =========================================================
+       4. CHAPTER 01 — ANIMATED LOCK & FLOATING QUIZ POPUP
+       ========================================================= */
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .section-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .lock-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 24px;
+      pointer-events: none; 
+    }
+
+    .lock-container {
+      width: 80px;
+      height: 95px;
+      position: relative;
+      margin-bottom: 14px;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .lock-container:hover {
+      transform: scale(1.12);
+    }
+
+    .lock-shackle {
+      width: 44px;
+      height: 48px;
+      border: 7px solid #ff77c6;
+      border-bottom: none;
+      border-radius: 28px 28px 0 0;
+      position: absolute;
+      top: 0;
+      left: 18px;
+      transform-origin: 7px 40px;
+      transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), border-color 0.5s;
+    }
+
+    .lock-body {
+      width: 80px;
+      height: 60px;
+      background: linear-gradient(135deg, #ff4fb3, #9b6cff);
+      border-radius: 18px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      box-shadow: 0 10px 30px rgba(255, 79, 179, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.5s, box-shadow 0.5s;
+    }
+
+    .lock-keyhole {
+      width: 14px;
+      height: 18px;
+      background: #090616;
+      border-radius: 6px;
+      position: relative;
+    }
+
+    .lock-keyhole::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 9px solid #090616;
+    }
+
+    .lock-click-prompt {
+      font-size: 0.85rem;
+      color: var(--pink);
+      font-weight: 600;
+      letter-spacing: 1px;
+      animation: pulseText 1.5s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulseText {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    .lock-container.unlocked .lock-shackle {
+      transform: translateY(-18px) rotateY(180deg);
+      border-color: #55e8ff;
+    }
+
+    .lock-container.unlocked .lock-body {
+      background: linear-gradient(135deg, #00b4d8, #55e8ff);
+      box-shadow: 0 0 35px rgba(85, 232, 255, 0.7);
+    }
+
+    .lock-container.shake {
+      animation: lockShake 0.4s ease-in-out;
+    }
+
+    @keyframes lockShake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-9px) rotate(-6deg); }
+      40%, 80% { transform: translateX(9px) rotate(6deg); }
+    }
+
+    /* Quiz Modal Overlay */
+    .quiz-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(5, 4, 18, 0.84);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .quiz-modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .quiz-card {
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 30px 26px;
+      position: relative;
+      background: linear-gradient(145deg, rgba(20, 14, 38, 0.96), rgba(10, 6, 24, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 79, 179, 0.25);
+      transform: scale(0.85) translateY(20px);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .quiz-modal-overlay.active .quiz-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .quiz-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.82rem;
+      color: var(--cyan);
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .quiz-progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 22px;
+    }
+
+    .quiz-progress-fill {
+      height: 100%;
+      width: 14.28%;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--cyan));
+      transition: width 0.4s ease;
+      border-radius: 99px;
+    }
+
+    .quiz-question {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 20px;
+      min-height: 56px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .quiz-opt-btn {
+      width: 100%;
+      text-align: left;
+      padding: 15px 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .quiz-opt-btn:hover {
+      background: rgba(255, 79, 179, 0.12);
+      border-color: rgba(255, 79, 179, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .quiz-opt-btn.correct {
+      background: rgba(85, 232, 255, 0.18) !important;
+      border-color: var(--cyan) !important;
+      color: #fff;
+    }
+
+    .quiz-opt-btn.wrong {
+      background: rgba(255, 79, 120, 0.18) !important;
+      border-color: #ff5b78 !important;
+      animation: shake 0.35s ease;
+    }
+
+    @keyframes shake {
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    .quiz-feedback {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      min-height: 22px;
+    }
+
+    /* =========================================================
+       5. CHAPTER LOCK OVERLAY
+       ========================================================= */
+    .chapter-block {
+      margin-bottom: 70px;
+      position: relative;
+      transition: filter 0.8s ease, opacity 0.8s ease;
+    }
+
+    .chapter-block.locked > .chapter-content {
+      filter: blur(8px);
+      opacity: 0.25;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .chapter-lock-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .chapter-block:not(.locked) .chapter-lock-overlay {
+      display: none;
+    }
+
+    .lock-overlay-card {
+      background: rgba(12, 10, 30, 0.88);
+      border: 1px solid var(--border-light);
+      padding: 28px 22px;
+      border-radius: var(--radius-lg);
+      text-align: center;
+      max-width: 420px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px);
+    }
+
+    .lock-overlay-card .icon { font-size: 2.2rem; margin-bottom: 10px; }
+    .lock-overlay-card h3 { font-size: 1.1rem; margin-bottom: 6px; }
+    .lock-overlay-card p { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* =========================================================
+       6. CHAPTER 02 — TIME CAPSULE TIMELINE
+       ========================================================= */
+    .timeline-roadmap {
+      position: relative;
+      padding: 20px 0;
+      margin-top: 20px;
+    }
+
+    .timeline-roadmap::before {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 50%;
+      width: 3px;
+      background: linear-gradient(to bottom, var(--pink), var(--purple), var(--cyan));
+      transform: translateX(-50%);
+    }
+
+    .timeline-item {
+      position: relative;
+      width: 50%;
+      padding: 0 22px 45px;
+      box-sizing: border-box;
+    }
+
+    .timeline-item.left { left: 0; text-align: right; }
+    .timeline-item.right { left: 50%; text-align: left; }
+
+    .timeline-item::after {
+      content: "";
+      position: absolute;
+      top: 28px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--pink);
+      border: 3px solid #070614;
+      box-shadow: 0 0 12px var(--pink);
+      z-index: 5;
+    }
+
+    .timeline-item.left::after { right: -11px; }
+    .timeline-item.right::after { left: -11px; }
+
+    .memory-flip-card {
+      perspective: 1200px;
+      width: 100%;
+      height: 380px;
+      cursor: pointer;
+    }
+
+    .memory-flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .memory-flip-card.is-flipped .memory-flip-inner {
+      transform: rotateY(180deg);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .memory-flip-card:hover .memory-flip-inner { transform: rotateY(180deg); }
+      .memory-flip-card.is-flipped:hover .memory-flip-inner { transform: rotateY(0deg); }
+    }
+
+    .memory-card-front,
+    .memory-card-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: left;
+      border: 1px solid var(--border-light);
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    }
+
+    .memory-card-front {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+      backdrop-filter: blur(14px);
+    }
+
+    .memory-card-back {
+      transform: rotateY(180deg);
+      background: linear-gradient(135deg, rgba(155, 108, 255, 0.25), rgba(255, 79, 179, 0.22));
+      backdrop-filter: blur(18px);
+      border-color: rgba(255, 79, 179, 0.4);
+      box-shadow: inset 0 0 30px rgba(255, 79, 179, 0.2);
+    }
+
+    .memory-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 99px;
+      background: rgba(85, 232, 255, 0.12);
+      border: 1px solid rgba(85, 232, 255, 0.35);
+      color: var(--cyan);
+      font-size: 0.72rem;
+      font-weight: 700;
+      width: fit-content;
+    }
+
+    .memory-date {
+      font-size: 0.78rem;
+      color: var(--gold);
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    .memory-photo-container {
+      width: 100%;
+      height: 180px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 10px 0;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: #120a21;
+    }
+
+    .memory-photo-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .memory-card-front:hover .memory-photo-container img { transform: scale(1.08); }
+    }
+
+    .memory-card-front h3 { font-size: 1.05rem; color: #fff; }
+
+    .flip-hint {
+      font-size: 0.72rem;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      opacity: 0.85;
+      margin-top: 4px;
+    }
+
+    .memory-card-back h3 { font-size: 1.15rem; color: var(--gold); margin-bottom: 8px; }
+    .memory-card-back p { font-size: 0.88rem; color: var(--text-main); line-height: 1.6; flex-grow: 1; }
+    .memory-quote {
+      font-family: 'Caveat', cursive;
+      font-size: 1.15rem;
+      color: var(--pink);
+      border-top: 1px dashed rgba(255, 255, 255, 0.2);
+      padding-top: 8px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .timeline-roadmap::before { left: 20px; }
+      .timeline-item {
+        width: 100%;
+        left: 0 !important;
+        padding-left: 45px;
+        padding-right: 0;
+        text-align: left !important;
+      }
+      .timeline-item.left::after, .timeline-item.right::after { left: 12px; right: auto; }
+      .memory-flip-card { height: 360px; }
+    }
+
+    /* =========================================================
+       7. PREMIUM 3D MUSIC PLAYER
+       ========================================================= */
+    .player-card-3d {
+      padding: 24px;
+      margin-bottom: 35px;
+      background: linear-gradient(135deg, rgba(30, 18, 52, 0.85), rgba(12, 7, 24, 0.95));
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2);
+      transition: border-color 0.4s, box-shadow 0.4s;
+    }
+
+    .player-card-3d.highlight-pulse {
+      border-color: var(--pink);
+      box-shadow: 0 0 35px rgba(255, 79, 179, 0.6);
+      animation: pulsePlayer 1.2s infinite alternate;
+    }
+
+    @keyframes pulsePlayer {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.02); }
+    }
+
+    .music-bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .music-main-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .vinyl-disc {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: repeating-radial-gradient(circle, #111 0 2px, #222 3px 4px);
+      box-shadow: 0 0 15px rgba(0,0,0,0.9), 0 0 0 2px #333;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: spin 4s linear infinite;
+      animation-play-state: paused;
+      flex-shrink: 0;
+    }
+
+    .vinyl-disc.playing { animation-play-state: running; }
+
+    .vinyl-disc::after {
+      content: "";
+      width: 14px; height: 14px;
+      background: var(--pink);
+      border-radius: 50%;
+      box-shadow: inset 0 0 4px #000;
+    }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    .track-details { flex-grow: 1; text-align: left; }
+    .track-details h4 { font-size: 1.05rem; color: #fff; font-weight: 700; }
+    .track-details p { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+
+    .audio-spectrum {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 22px;
+      margin-top: 6px;
+    }
+
+    .spectrum-bar {
+      width: 4px;
+      height: 4px;
+      background: linear-gradient(to top, var(--pink), var(--cyan));
+      border-radius: 2px;
+      transition: height 0.2s ease;
+    }
+
+    .vinyl-disc.playing ~ .track-details .spectrum-bar {
+      animation: spectrumBounce 0.8s ease-in-out infinite alternate;
+    }
+
+    .spectrum-bar:nth-child(1) { animation-delay: 0.1s; }
+    .spectrum-bar:nth-child(2) { animation-delay: 0.3s; }
+    .spectrum-bar:nth-child(3) { animation-delay: 0.5s; }
+    .spectrum-bar:nth-child(4) { animation-delay: 0.2s; }
+    .spectrum-bar:nth-child(5) { animation-delay: 0.4s; }
+
+    @keyframes spectrumBounce {
+      0% { height: 4px; }
+      100% { height: 22px; }
+    }
+
+    .play-control-btn {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #ffffff, #f0bbf3);
+      color: #0d061a;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 25px rgba(255,79,179,0.5);
+      transition: transform 0.2s, background 0.3s;
+      flex-shrink: 0;
+    }
+
+    .play-control-btn:hover { transform: scale(1.08); }
+    .play-control-btn:active { transform: scale(0.94); }
+
+    .progress-container {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .time-stamp {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+
+    .progress-bar-bg {
+      flex-grow: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 99px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--cyan));
+      border-radius: 99px;
+      transition: width 0.1s linear;
+    }
+
+    /* =========================================================
+       8. CINEMATIC 3D DIARY BOOK — REBUILT TWO-PAGE SPREAD
+       ========================================================= */
+    .book-outer-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 26px auto 8px;
+      user-select: none;
+      -webkit-user-select: none;
+      /* Dimensions adjust for TWO pages horizontally side by side */
+      --book-ar: 0.671;
+      --book-raw: min(44vw, 320px);
+      --book-h: clamp(220px, min(calc(var(--book-raw) / var(--book-ar)), 75vh), 600px);
+      --book-w: calc(var(--book-h) * var(--book-ar));
+      --turn-ms: 950ms;
+      --paper-a: #fdfaf3;
+      --paper-b: #f4ecdb;
+      --paper-edge: #ded0b8;
+      --ink: #3a3145;
+    }
+
+    .key-dock-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(30,16,52,0.42));
+      border: 1px dashed rgba(243, 199, 124, 0.35);
+      border-radius: 16px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 5;
+      transition: all 0.5s ease;
+    }
+
+    .key-dock-wrapper.is-open {
+      border-color: rgba(85, 232, 255, 0.45);
+      background: linear-gradient(135deg, rgba(85,232,255,0.10), rgba(155,108,255,0.10));
+    }
+
+    .key-dock-instruction {
+      font-size: 0.82rem;
+      color: var(--gold);
+      font-weight: 600;
+      line-height: 1.45;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .key-dock-instruction .dock-emoji { font-size: 1.1rem; }
+
+    .key-slot {
+      width: 96px;
+      height: 42px;
+      flex: 0 0 auto;
+      border-radius: 10px;
+      border: 1px dashed rgba(243, 199, 124, 0.45);
+      background: rgba(0,0,0,0.35);
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.6);
+      position: relative;
+    }
+
+    .key-slot::after {
+      content: "";
+      position: absolute;
+      inset: -6px;
+      border-radius: 14px;
+      border: 1px solid rgba(243, 199, 124, 0.18);
+      animation: slotPulse 2.4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .key-slot.emptied::after { display: none; }
+    .key-slot.emptied { opacity: 0.35; border-style: solid; }
+
+    @keyframes slotPulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50%      { transform: scale(1.08); opacity: 0; }
+    }
+
+    .key-actor {
+      position: absolute;
+      left: 0; top: 0;
+      width: 92px;
+      height: 48px;
+      z-index: 90;
+      cursor: grab;
+      touch-action: none;
+      transform-origin: 50% 50%;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                  clip-path 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                  filter 0.3s ease, opacity 0.4s ease;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.55)) drop-shadow(0 0 10px rgba(243,199,124,0.35));
+      will-change: transform;
+    }
+
+    .key-actor svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+    .key-actor.dragging {
+      cursor: grabbing;
+      transition: filter 0.2s ease;
+      filter: drop-shadow(0 14px 18px rgba(0,0,0,0.6)) drop-shadow(0 0 22px rgba(243,199,124,0.75));
+    }
+
+    .key-actor.locked-out { opacity: 0.45; filter: grayscale(0.85); cursor: not-allowed; }
+    .key-actor.spent { opacity: 0; pointer-events: none; }
+
+    .key-actor.idle-hint { animation: keyBreathe 2.6s ease-in-out infinite; }
+    @keyframes keyBreathe {
+      0%, 100% { filter: drop-shadow(0 6px 10px rgba(0,0,0,.55)) drop-shadow(0 0 8px rgba(243,199,124,.3)); }
+      50%      { filter: drop-shadow(0 6px 10px rgba(0,0,0,.55)) drop-shadow(0 0 20px rgba(243,199,124,.85)); }
+    }
+
+    .key-tip-marker {
+      position: absolute;
+      right: 3px; top: 50%;
+      width: 2px; height: 2px;
+      margin-top: -1px;
+      pointer-events: none;
+    }
+
+    /* 3D Book Stage (Width = 2 pages) */
+    .book-stage {
+      position: relative;
+      width: calc(var(--book-w) * 2);
+      height: var(--book-h);
+      margin: 0 auto;
+      z-index: 2;
+      touch-action: pan-y;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      /* Centers the right block (closed book) into the middle of the screen initially */
+      transform: translateX(-25%);
+    }
+
+    .book-stage.is-open {
+      /* Once opened, realigns back to true center to fit both spread pages */
+      transform: translateX(0%);
+    }
+
+    .book-spine-slab {
+      position: absolute;
+      left: calc(50% - 8px);
+      top: 5px; bottom: 5px;
+      width: 16px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #0d0518 0%, #2a1448 50%, #0d0518 100%);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.65);
+      z-index: 1;
+      transition: all 0.6s ease;
+    }
+
+    .book-stage::after {
+      content: "";
+      position: absolute;
+      left: 54%; right: 6%;
+      bottom: -26px;
+      height: 34px;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0.65), transparent 70%);
+      filter: blur(6px);
+      z-index: 0;
+      pointer-events: none;
+      transition: left 0.8s ease, right 0.8s ease;
+    }
+
+    .book-stage.is-open::after {
+      left: 6%; right: 6%;
+    }
+
+    .page-block-edge {
+      position: absolute;
+      top: 9px; bottom: 9px;
+      right: calc(-1 * var(--edge-w, 10px));
+      width: var(--edge-w, 10px);
+      border-radius: 0 5px 5px 0;
+      background:
+        repeating-linear-gradient(180deg, rgba(60,40,20,0.16) 0 1px, transparent 1px 4px),
+        linear-gradient(90deg, #9d8a6d, #ddd0b6 40%, #c3b195 72%, #8d7c60);
+      box-shadow: 3px 6px 16px rgba(0,0,0,0.5), inset 1px 0 3px rgba(0,0,0,0.35);
+      opacity: 0.92;
+      transition: right 0.6s ease, width 0.6s ease;
+      z-index: 1;
+    }
+
+    .page-block-edge.left {
+      left: calc(-1 * var(--edge-l, 4px));
+      right: auto;
+      width: var(--edge-l, 4px);
+      border-radius: 5px 0 0 5px;
+      background:
+        repeating-linear-gradient(180deg, rgba(60,40,20,0.16) 0 1px, transparent 1px 4px),
+        linear-gradient(270deg, #9d8a6d, #ddd0b6 40%, #c3b195 72%, #8d7c60);
+      box-shadow: -3px 6px 16px rgba(0,0,0,0.5), inset -1px 0 3px rgba(0,0,0,0.35);
+    }
+
+    .ribbon-bookmark {
+      position: absolute;
+      top: -10px;
+      right: 8%;
+      width: 15px;
+      height: 32%;
+      background: linear-gradient(135deg, #ff77c6, #d63384 55%, #a02465);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.45), inset -2px 0 3px rgba(0,0,0,0.25), inset 2px 0 3px rgba(255,255,255,0.3);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 84%, 0 100%);
+      z-index: 120;
+      pointer-events: none;
+      transition: height 0.6s ease;
+    }
+
+    .book-block {
+      position: absolute;
+      left: 50%;
+      right: 0;
+      top: 0; bottom: 0;
+      perspective: 1700px;
+      perspective-origin: 0% 50%;
+      transform-style: preserve-3d;
+      z-index: 2;
+    }
+
+    .book-base {
+      position: absolute;
+      inset: 0;
+      border-radius: 3px 12px 12px 3px;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(243,199,124,0.10), transparent 60%),
+        linear-gradient(140deg, #241333, #150a24);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      color: rgba(243,199,124,0.65);
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      letter-spacing: 3px;
+      z-index: 0;
+    }
+
+    .gutter-shadow {
+      position: absolute;
+      inset: 0;
+      border-radius: 3px 12px 12px 3px;
+      z-index: 940;
+      pointer-events: none;
+      opacity: 0.25;
+      background: linear-gradient(90deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.18) 14%, transparent 34%);
+      transition: opacity 0.35s ease;
+    }
+    .gutter-shadow.deep { opacity: 0.85; }
+
+    /* LEAVES (Double sided container) */
+    .leaf {
+      position: absolute;
+      inset: 0;
+      transform-origin: left center;
+      transform: rotateY(0deg);
+      transform-style: preserve-3d;
+      transition: transform var(--turn-ms) cubic-bezier(0.46, 0.03, 0.30, 1);
+      z-index: 5;
+      will-change: transform;
+    }
+
+    .leaf.flipped { transform: rotateY(-180deg); }
+
+    .leaf-front, .leaf-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 3px 12px 12px 3px;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.07) 0, transparent 7%),
+        repeating-linear-gradient(0deg, rgba(120,90,60,0.035) 0 1px, transparent 1px 3px),
+        linear-gradient(118deg, var(--paper-b) 0%, var(--paper-a) 14%, #fffefb 55%, var(--paper-b) 100%);
+      border: 1px solid var(--paper-edge);
+      box-shadow: inset 16px 0 26px -18px rgba(60,35,15,0.55), 0 14px 30px rgba(0,0,0,0.42);
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      padding: 5.5% 6% 4.5%;
+      overflow: hidden;
+      container-type: inline-size;
+    }
+
+    .leaf-back {
+      transform: rotateY(180deg);
+      border-radius: 12px 3px 3px 12px;
+      background:
+        linear-gradient(270deg, rgba(0,0,0,0.07) 0, transparent 7%),
+        repeating-linear-gradient(0deg, rgba(120,90,60,0.035) 0 1px, transparent 1px 3px),
+        linear-gradient(242deg, var(--paper-b) 0%, var(--paper-a) 14%, #fffefb 55%, var(--paper-b) 100%);
+      box-shadow: inset -16px 0 26px -18px rgba(60,35,15,0.55), 0 14px 30px rgba(0,0,0,0.42);
+    }
+
+    .turn-shade {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0;
+      background:
+        linear-gradient(90deg, rgba(28,12,44,0.55) 0%, rgba(28,12,44,0.12) 38%, transparent 62%),
+        linear-gradient(270deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.05) 30%, transparent 55%);
+      z-index: 9;
+    }
+
+    .leaf.turning .leaf-front .turn-shade,
+    .leaf.turning .leaf-back .turn-shade {
+      animation: turnShade var(--turn-ms) cubic-bezier(0.46, 0.03, 0.30, 1);
+    }
+
+    @keyframes turnShade {
+      0%   { opacity: 0; }
+      45%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .leaf-front::after, .leaf-back::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 3px;
+      pointer-events: none;
+    }
+    .leaf-front::after { left: 0; background: linear-gradient(90deg, rgba(90,60,30,0.28), transparent); }
+    .leaf-back::after { right: 0; background: linear-gradient(270deg, rgba(90,60,30,0.28), transparent); }
+
+    .leaf.cover-leaf .leaf-front {
+      padding: 0;
+      background: #120a22;
+      border: none;
+      box-shadow: 0 18px 44px rgba(0,0,0,0.75), inset 0 0 0 1px rgba(243,199,124,0.35);
+      border-radius: 4px 14px 14px 4px;
+    }
+    
+    .leaf.cover-leaf .leaf-back {
+      padding: 0;
+      background: #120a22;
+      border: none;
+      box-shadow: inset -16px 0 26px -18px rgba(0,0,0,0.8), 0 14px 30px rgba(0,0,0,0.42);
+      border-radius: 14px 4px 4px 14px;
+    }
+
+    .cover-frame { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
+
+    .cover-frame img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center; display: block;
+    }
+
+    .cover-frame::before {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border: 1px solid rgba(184, 134, 11, 0.45);
+      border-radius: 6px;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .cover-sheen {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,0.32) 48%, transparent 58%);
+      transform: translateX(-70%);
+      animation: coverSheen 6.5s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    @keyframes coverSheen {
+      0%, 62%  { transform: translateX(-120%); }
+      88%, 100%{ transform: translateX(120%); }
+    }
+
+    .cover-caption {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      z-index: 5;
+      text-align: center;
+      padding: 34px 14px 12px;
+      background: linear-gradient(to top, rgba(8,4,16,0.92), rgba(8,4,16,0.55) 45%, transparent);
+      font-size: 0.64rem;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: #f0e2c6;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      pointer-events: none;
+    }
+
+    .page-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(0.72rem, 4.6cqw, 0.95rem);
+      font-weight: 700;
+      color: #ac2f72;
+      border-bottom: 1px dashed #e6c2d6;
+      padding-bottom: 6px;
+      margin-bottom: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      flex: 0 0 auto;
+    }
+
+    .page-photo-frame {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      border: 1px solid #e3d3bd;
+      background: #e9e0d2;
+      flex: 0 0 auto;
+      box-shadow: 0 4px 10px rgba(80,55,25,0.16), inset 0 0 10px rgba(0,0,0,0.08);
+    }
+
+    .page-photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .page-body {
+      font-size: clamp(0.70rem, 4.15cqw, 0.9rem);
+      line-height: 1.62;
+      text-align: left;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: auto;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+      color: #3b3247;
+      padding-right: 6px;
+      -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 92%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 0, #000 92%, transparent 100%);
+    }
+
+    .page-body::-webkit-scrollbar { width: 4px; }
+    .page-body::-webkit-scrollbar-thumb { background: rgba(172,47,114,0.35); border-radius: 4px; }
+    .page-body p { margin-bottom: 8px; }
+
+    .page-num {
+      flex: 0 0 auto;
+      font-size: clamp(0.6rem, 3.1cqw, 0.72rem);
+      color: #9a8fa2;
+      text-align: center;
+      border-top: 1px dashed #e2d7c7;
+      padding-top: 6px;
+      margin-top: 8px;
+      letter-spacing: 1px;
+    }
+
+    .book-tap-zone {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 50%;
+      z-index: 200;
+      pointer-events: none;
+    }
+    .book-tap-zone.left  { left: 0; }
+    .book-tap-zone.right { right: 0; }
+
+    .tap-hint-badge {
+      position: absolute;
+      bottom: 10px;
+      padding: 5px 11px;
+      background: rgba(12, 6, 24, 0.62);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: #fff;
+      font-size: 0.64rem;
+      border-radius: 99px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .book-stage.readable { cursor: pointer; }
+    .book-stage.hints-done .tap-hint-badge { opacity: 0 !important; }
+    .book-stage.readable .tap-hint-badge { opacity: 0.85; transform: translateY(0); }
+    .book-stage.readable .tap-hint-badge.is-off { opacity: 0.2; }
+    .tap-hint-badge.left-badge  { left: 10px; }
+    .tap-hint-badge.right-badge { right: 10px; }
+
+    /* Strap + padlock assembly - Bound to the right block (closed book) */
+    .lock-assembly,
+    .strap-layer {
+      position: absolute;
+      left: 75%;
+      top: 0;
+      width: calc(var(--book-w) + 34px);
+      height: var(--book-h);
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .strap-layer  { z-index: 200; }
+    .lock-assembly{ z-index: 300; }
+
+    .strap-band {
+      position: absolute;
+      left: 6px; right: 6px;
+      top: 52%;
+      height: clamp(30px, 8%, 44px);
+      transform: translateY(-50%);
+      border-radius: 4px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.22) 0%, transparent 22%, transparent 74%, rgba(0,0,0,0.35) 100%),
+        linear-gradient(90deg, #4a2c17, #7a4a24 18%, #8d5a2c 50%, #6b3f1e 82%, #3f2413);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.6), inset 0 0 14px rgba(0,0,0,0.45);
+      transition: transform 0.9s cubic-bezier(0.34, 1.26, 0.64, 1), opacity 0.8s ease;
+    }
+
+    .strap-band::before,
+    .strap-band::after {
+      content: "";
+      position: absolute;
+      left: 10px; right: 10px;
+      height: 0;
+      border-top: 1px dashed rgba(255, 222, 173, 0.45);
+    }
+    .strap-band::before { top: 24%; }
+    .strap-band::after  { bottom: 24%; }
+
+    .strap-buckle {
+      position: absolute;
+      top: 52%;
+      right: 2px;
+      width: 26px;
+      height: clamp(38px, 10%, 54px);
+      transform: translateY(-50%);
+      border-radius: 5px;
+      background: linear-gradient(145deg, #ffe7b3, #c9962f 45%, #8c6613);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.55), inset 0 1px 2px rgba(255,255,255,0.7), inset 0 -2px 4px rgba(0,0,0,0.35);
+      transition: transform 0.9s ease, opacity 0.6s ease;
+    }
+
+    .strap-buckle::after {
+      content: "";
+      position: absolute;
+      inset: 7px 6px;
+      border-radius: 3px;
+      background: rgba(30,14,4,0.55);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    .padlock {
+      position: absolute;
+      right: -14px;
+      top: 52%;
+      width: clamp(62px, 17%, 86px);
+      transform: translateY(-50%) rotate(0deg);
+      transform-origin: 50% 14%;
+      pointer-events: auto;
+      filter: drop-shadow(0 12px 18px rgba(0,0,0,0.7));
+      transition: transform 1s cubic-bezier(0.34, 1.26, 0.64, 1), opacity 0.7s ease, filter 0.3s ease;
+    }
+
+    .padlock svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+    .padlock.near {
+      filter: drop-shadow(0 12px 18px rgba(0,0,0,0.7)) drop-shadow(0 0 16px rgba(85,232,255,0.95));
+    }
+    .padlock.near .keyhole-halo { opacity: 1; }
+
+    .keyhole-halo {
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .padlock.jiggle { animation: lockJiggle 0.42s ease-in-out 2; }
+    @keyframes lockJiggle {
+      0%, 100% { transform: translateY(-50%) rotate(0deg); }
+      25%      { transform: translateY(-50%) rotate(-2.2deg); }
+      75%      { transform: translateY(-50%) rotate(2.2deg); }
+    }
+
+    .padlock.snap { animation: lockSnap 0.3s ease-out; }
+    @keyframes lockSnap {
+      0%   { transform: translateY(-50%) scale(1); }
+      40%  { transform: translateY(-50%) scale(1.07); }
+      100% { transform: translateY(-50%) scale(1); }
+    }
+
+    .shackle-group {
+      transform-box: fill-box;
+      transform-origin: 88% 100%;
+      transition: transform 0.75s cubic-bezier(0.34, 1.5, 0.5, 1);
+    }
+    .padlock.opened .shackle-group { transform: translateY(-13px) rotate(32deg); }
+
+    .strap-layer.released .strap-band   { transform: translateY(-50%) translateY(190px) rotate(7deg); opacity: 0; }
+    .strap-layer.released .strap-buckle { transform: translateY(-50%) translateY(210px) rotate(-22deg); opacity: 0; }
+    .lock-assembly.released .padlock    { transform: translateY(-50%) translate(26px, 230px) rotate(46deg); opacity: 0; }
+
+    .book-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 40px;
+      position: relative;
+      z-index: 6;
+    }
+
+    .book-nav-btn {
+      width: 48px; height: 48px;
+      touch-action: manipulation;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      border: 1px solid rgba(243,199,124,0.4);
+      background: linear-gradient(145deg, rgba(243,199,124,0.2), rgba(255,255,255,0.04));
+      color: var(--gold);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .book-nav-btn:hover:not(:disabled) {
+      background: linear-gradient(145deg, rgba(243,199,124,0.4), rgba(255,255,255,0.08));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(243,199,124,0.28);
+    }
+
+    .book-nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+
+    .book-progress-wrap { flex: 1 1 auto; max-width: 240px; text-align: center; }
+
+    .book-progress-track {
+      height: 5px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.10);
+      overflow: hidden;
+    }
+
+    .book-progress-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--gold), var(--pink));
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @media (max-width: 480px) {
+      .lock-assembly, .strap-layer { width: calc(var(--book-w) + 18px); }
+      .padlock { right: -7px; }
+      .key-dock-wrapper { flex-direction: column; align-items: stretch; gap: 12px; padding: 12px; }
+      .key-dock-instruction { font-size: 0.76rem; justify-content: center; text-align: center; }
+      .key-slot { align-self: center; }
+      .book-controls { gap: 10px; margin-top: 34px; }
+      .book-nav-btn { width: 46px; height: 46px; }
+    }
+
+    @media (max-height: 640px) and (orientation: landscape) {
+      .book-outer-container { --book-h: clamp(200px, 82vh, 420px); }
+      .book-controls { margin-top: 26px; }
+      .key-dock-wrapper { padding: 9px 14px; margin-bottom: 14px; }
+      .key-dock-instruction { font-size: 0.74rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cover-sheen, .key-actor.idle-hint, .key-slot::after { animation: none !important; }
+      .book-outer-container { --turn-ms: 420ms; }
+    }
+
+    .final-love-note {
+      background: linear-gradient(135deg, rgba(255,79,179,0.12), rgba(155,108,255,0.12));
+      border: 1px solid rgba(255,79,179,0.3);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-top: 35px;
+      font-size: 0.92rem;
+      line-height: 1.75;
+      color: #ede2f7;
+      text-align: left;
+    }
+
+    .final-love-note strong {
+      color: var(--pink);
+      font-size: 1.05rem;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .app-footer {
+      text-align: center;
+      padding: 40px 0 20px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+    .app-footer span {
+      color: var(--pink);
+      display: inline-block;
+      animation: heartPulse 1.5s infinite;
+    }
+
+    @keyframes heartPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+
+    #flash-overlay {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      background: radial-gradient(circle, rgba(255,255,255,0.85), rgba(255,79,179,0.25), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    #flash-overlay.active { opacity: 1; }
+  </style>
+</head>
+
+<body>
+  <!-- FLOATING EMOJIS BACKGROUND -->
+  <div id="floating-container"></div>
+
+  <!-- FLASH OVERLAY ON UNLOCK -->
+  <div id="flash-overlay"></div>
+
+  <!-- TOAST NOTIFICATION BANNER -->
+  <div id="toastBanner" class="toast-banner">
+    <span>🎵</span>
+    <span id="toastText">Putar musiknya terlebih dahulu sebelum membuka buku harian!</span>
+  </div>
+
+  <main class="app-container">
+
+    <!-- HERO SECTION (CHAPTER 0) -->
+    <section class="hero">
+      <div class="badge">✦ The Book of Us ✦</div>
+      <h1>
+        <span class="gradient-text">Happy Birthday,</span><br />
+        My Favorite Person.
+      </h1>
+      <p>Ada satu cerita manis yang dibuat khusus untukmu, terukir tenang di antara bisingnya dunia. Sebuah kisah yang tak pernah terburu-buru menuju halaman terakhir, sebab setiap lembarnya hanya mencatat betapa indahnya kamu, betapa hangatnya hadirmu, dan betapa beruntungnya aku memiliki kesempatan untuk mencintaimu setiap hari. Dalam cerita yang kita bangun bersama, kamu bukan hanya sekedar tokoh utama, melainkan <b><font color="red">seluruh alasan</font></b> mengapa halaman ini layak untuk dituliskan.</p>
+	  <p>Sebuah alur yang tidak ditulis oleh pujangga ternama, melainkan dirajut perlahan oleh setiap detik yang kita lewati bersama. Di antara riuhnya dunia dan cepatnya waktu berputar, hadirmu menjadi satu-satunya jeda yang selalu mampu meredakan lelah. Cerita ini tidak berisi janji-janji muluk yang mengawang, melainkan deretan momen sederhana yang berubah menjadi luar biasa hanya karena ada kamu di dalamnya.</p>
+	  <p>Bersamamu, aku belajar bahwa cinta bukanlah tentang mencari sosok tanpa celah, melainkan menemukan seseorang yang membuat segalanya terasa pas, utuh, dan cukup.</p>
+	  <p>Setiap tawa, setiap obrolan random di larut malam, bahkan setiap hening yang kita bagi memiliki keindahannya sendiri.</p>
+	  <p>Laman kecil ini bukan sekadar halaman digital biasa, melainkan sebuah ruang keabadian bagi rasa syukurku.</p>
+	  <p>Aku ingin mengabadikan bagaimana hadirmu memberi warna baru dalam hidupku, dan bagaimana namamu kini terselip indah dalam setiap doa. Jika dunia di luar sana terasa begitu bising dan menuntut, ketahuilah bahwa di sini, di dalam cerita yang kita bangun bersama, kamu akan selalu menemukan rumah yang hangat dan aman.</p>
+	  <p>Perjalanan kita mungkin baru melintasi beberapa bab awal, namun aku tahu kisah terindah kita masih menanti di masa depan. Terima kasih telah menjadi pendamping, sahabat, penyemangat,tambatan hati dan alasan terbaikku untuk selalu tersenyum setiap hari.</p>
+	  <p>Cerita ini milikmu, sebagaimana seluruh rasa yang terus tumbuh dan bermekar di dalamnya, kini dan selamanya. Aku Sayang Kamu.</p>
+	  
+	  <br><p>Klik gemboknya ya by 🥰, akan ada kejutan di didalamnya untuk memulai petualangan kenangan kita. ♡</p>
+      <div class="scroll-hint">↓ Scroll ke bawah ya manis (❀❛ ֊ ❛ „) ♡</div>
+    </section>
+	<br><br><br><br><br>
+
+    <!-- CHAPTER 01: THE SECRET LOCKER -->
+    <section id="chapter1" class="chapter-block">
+      <div class="lock-wrapper">
+        <div class="lock-container" id="mainLock" onclick="revealQuizPanel()" title="Ketuk Gembok untuk Membuka Pertanyaan Rahasia">
+          <div class="lock-shackle"></div>
+          <div class="lock-body">
+            <div class="lock-keyhole"></div>
+          </div>
+        </div>
+        <div class="lock-click-prompt" id="lockPromptText">✦ KLIK GEMBOK INI UNTUK MEMBUKA ✦</div>
+      </div>
+
+      <h2 class="section-title">01 — The Secret Locker</h2>
+      <p class="section-subtitle">Kuncinya ada di ingatanmu dan Ga ada di GOOGLE 😄. Jawab dari hati. 😘</p>
+    </section>
+
+    <!-- FLOATING POP-UP MODAL OVERLAY FOR QUIZ CHAPTER 1 -->
+    <div class="quiz-modal-overlay" id="quizModalOverlay">
+      <div class="quiz-card glass" id="quizCard">
+        <div class="quiz-meta">
+          <span id="quiz-count-text">Question 1 / 7</span>
+          <span id="quiz-status-badge">🔒 LOCKED</span>
+        </div>
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
+        </div>
+
+        <div class="quiz-question" id="quiz-question-text">Loading question...</div>
+        <div class="quiz-options" id="quiz-options-container"></div>
+        <div class="quiz-feedback" id="quiz-feedback-text"></div>
+      </div>
+    </div>
+
+    <!-- CHAPTER 02: OUR TIME CAPSULE -->
+    <section id="chapter2" class="chapter-block locked">
+      <div class="chapter-lock-overlay">
+        <div class="lock-overlay-card">
+          <div class="icon">🔒</div>
+          <h3>Chapter 02 Masih Terkunci</h3>
+          <p>Selesaikan 7 pertanyaan di Chapter 01 untuk membuka kapsul waktu ini.</p>
+        </div>
+      </div>
+
+      <div class="chapter-content">
+        <h2 class="section-title">02 — Our Time Capsule</h2>
+        <p class="section-subtitle">Rekaman momen kecil yang tak pernah pudar oleh waktu (Klik kartu untuk membalik).</p>
+
+        <div class="timeline-roadmap">
+          
+          <!-- EPISODE 1 -->
+          <div class="timeline-item left">
+            <div class="memory-flip-card" onclick="this.classList.toggle('is-flipped')">
+              <div class="memory-flip-inner">
+                <div class="memory-card-front">
+                  <span class="memory-tag">EPISODE 01</span>
+                  <div class="memory-date">13 Januari 2026</div>
+                  <div class="memory-photo-container">
+                    <img src="Photo1.jpg" alt="Pertemuan Pertama" onerror="this.src='https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <h3>Titik Awal Cerita Kita</h3>
+                  <div class="flip-hint">↺ Sentuh untuk membalik</div>
+                </div>
+                <div class="memory-card-back">
+                  <span class="memory-tag">EPISODE 01</span>
+                  <div class="memory-date">13 Januari 2026</div>
+                  <h3>Titik Awal Cerita Kita</h3>
+                  <p>Di antara jutaan kemungkinan di dunia, Takdir bekerja dengan cara yang unik, semesta mempertemukan kita sebagai dua garis kehidupan yang tadinya tak saling tahu, untuk pertama kalinya bersilangan di waktu dan tempat yang paling tepat.</p>
+                  <div class="memory-quote">"A moment turned into a lifetime memory."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EPISODE 2 -->
+          <div class="timeline-item right">
+            <div class="memory-flip-card" onclick="this.classList.toggle('is-flipped')">
+              <div class="memory-flip-inner">
+                <div class="memory-card-front">
+                  <span class="memory-tag">EPISODE 02</span>
+                  <div class="memory-date">Februari 2026</div>
+                  <div class="memory-photo-container">
+                    <img src="Photo2.jpg" alt="Rutinitas Baru" onerror="this.src='https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <h3>Rutinitas Baru yang Dinanti</h3>
+                  <div class="flip-hint">↺ Sentuh untuk membalik</div>
+                </div>
+                <div class="memory-card-back">
+                  <span class="memory-tag">EPISODE 02</span>
+                  <div class="memory-date">Februari 2026</div>
+                  <h3>Rutinitas Baru yang Dinanti</h3>
+                  <p>Obrolan singkat mulai berubah menjadi riak cerita harian. Tanpa disadari, membaca chat dari kamu menjadi hal yang paling ditunggu setiap harinya.</p>
+                  <div class="memory-quote">"Your name became my favorite reason to smile every day."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EPISODE 3 -->
+          <div class="timeline-item left">
+            <div class="memory-flip-card" onclick="this.classList.toggle('is-flipped')">
+              <div class="memory-flip-inner">
+                <div class="memory-card-front">
+                  <span class="memory-tag">EPISODE 03</span>
+                  <div class="memory-date">Maret 2026</div>
+                  <div class="memory-photo-container">
+                    <img src="Photo3.jpg" alt="Tawa & Cerita" onerror="this.src='https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <h3>Tawa & Cerita</h3>
+                  <div class="flip-hint">↺ Sentuh untuk membalik</div>
+                </div>
+                <div class="memory-card-back">
+                  <span class="memory-tag">EPISODE 03</span>
+                  <div class="memory-date">Maret 2026</div>
+                  <h3>Tawa & Cerita</h3>
+                  <p>Di antara ribuan pesan yang kita kirim, selalu ada hari-hari yang dipenuhi bahasan konyol dan cerita random. Tawa sederhana di balik layar ponsel yang selalu berhasil mencairkan suasana.</p>
+                  <div class="memory-quote">"Even without seeing each other, our hearts found a way."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EPISODE 4 -->
+          <div class="timeline-item right">
+            <div class="memory-flip-card" onclick="this.classList.toggle('is-flipped')">
+              <div class="memory-flip-inner">
+                <div class="memory-card-front">
+                  <span class="memory-tag">EPISODE 04</span>
+                  <div class="memory-date">April 2026</div>
+                  <div class="memory-photo-container">
+                    <img src="Photo4.jpg" alt="Ruang Nyaman" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <h3>Ruang Nyaman Bersama</h3>
+                  <div class="flip-hint">↺ Sentuh untuk membalik</div>
+                </div>
+                <div class="memory-card-back">
+                  <span class="memory-tag">EPISODE 04</span>
+                  <div class="memory-date">April 2026</div>
+                  <h3>Ruang Nyaman Bersama</h3>
+                  <p>Obrolan yang makin dalam perlahan meruntuhkan dinding pembatas. Tanpa sadar, tempat paling aman untuk jujur berbagi cerita apa adanya berhasil ditemukan.</p>
+                  <div class="memory-quote">"In you, I found my favorite safe space."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EPISODE 5 -->
+          <div class="timeline-item left">
+            <div class="memory-flip-card" onclick="this.classList.toggle('is-flipped')">
+              <div class="memory-flip-inner">
+                <div class="memory-card-front">
+                  <span class="memory-tag">EPISODE 05</span>
+                  <div class="memory-date">Mei 2026</div>
+                  <div class="memory-photo-container">
+                    <img src="Photo5.jpg" alt="Terpisah Jarak" onerror="this.src='https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <h3>Terpisah Jarak, Terhubung Hati</h3>
+                  <div class="flip-hint">↺ Sentuh untuk membalik</div>
+                </div>
+                <div class="memory-card-back">
+                  <span class="memory-tag">EPISODE 05</span>
+                  <div class="memory-date">Mei 2026</div>
+                  <h3>Terpisah Jarak, Terhubung Hati</h3>
+                  <p>Hari demi hari dilalui dengan komunikasi yang intens. Kita membuktikan bahwa kehadiran bukan sekadar fisik, melainkan rasa saling mendukung dalam setiap cerita harian.</p>
+                  <div class="memory-quote">"Distance only proves how strong our connection really is."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EPISODE 6 -->
+          <div class="timeline-item right">
+            <div class="memory-flip-card" onclick="this.classList.toggle('is-flipped')">
+              <div class="memory-flip-inner">
+                <div class="memory-card-front">
+                  <span class="memory-tag">EPISODE 06</span>
+                  <div class="memory-date">Juni 2026</div>
+                  <div class="memory-photo-container">
+                    <img src="Photo4.jpg" alt="Jiwa Menemukan" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <h3>Jiwa yang Saling Menemukan</h3>
+                  <div class="flip-hint">↺ Sentuh untuk membalik</div>
+                </div>
+                <div class="memory-card-back">
+                  <span class="memory-tag">EPISODE 06</span>
+                  <div class="memory-date">Juni 2026</div>
+                  <h3>Jiwa yang Saling Menemukan</h3>
+                  <p>Rasa ini tumbuh bukan karena paksaan, melainkan dari kedalaman pemahaman yang kita pupuk setiap malam. Tanpa pernah saling menyentuh, jiwa kita terasa sudah saling mendekap erat.</p>
+                  <div class="memory-quote">"Two souls connecting, long before the eyes even met."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EPISODE 7 -->
+          <div class="timeline-item left">
+            <div class="memory-flip-card" onclick="this.classList.toggle('is-flipped')">
+              <div class="memory-flip-inner">
+                <div class="memory-card-front">
+                  <span class="memory-tag">EPISODE 07</span>
+                  <div class="memory-date">Juli 2026</div>
+                  <div class="memory-photo-container">
+                    <img src="Photo5.jpg" alt="Dalam Keheningan" onerror="this.src='https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <h3>Mengakar Dalam Keheningan</h3>
+                  <div class="flip-hint">↺ Sentuh untuk membalik</div>
+                </div>
+                <div class="memory-card-back">
+                  <span class="memory-tag">EPISODE 07</span>
+                  <div class="memory-date">Juli 2026</div>
+                  <h3>Mengakar Dalam Keheningan</h3>
+                  <p>Kehadiranmu mulai menjadi bagian yang tak terpisahkan dari hari-hariku. Meski jarak masih membentang, tidak ada lagi rasa sepi saat mengetahui namamu selalu setia di sana.</p>
+                  <div class="memory-quote">"You quietly became the presence I never want to lose."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EPISODE 8 -->
+          <div class="timeline-item right">
+            <div class="memory-flip-card" onclick="this.classList.toggle('is-flipped')">
+              <div class="memory-flip-inner">
+                <div class="memory-card-front">
+                  <span class="memory-tag">EPISODE 08</span>
+                  <div class="memory-date">Agustus 2026</div>
+                  <div class="memory-photo-container">
+                    <img src="Photo4.jpg" alt="Desir Rindu" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <h3>Desir Rindu Yang Menguat</h3>
+                  <div class="flip-hint">↺ Sentuh untuk membalik</div>
+                </div>
+                <div class="memory-card-back">
+                  <span class="memory-tag">EPISODE 08</span>
+                  <div class="memory-date">Agustus 2026</div>
+                  <h3>Desir Rindu Yang Menguat</h3>
+                  <p>Percakapan kita bukan lagi sekadar pelipur sepi, melainkan jembatan rindu yang kian menguat. Ada kehangatan tak kasat mata yang selalu hadir di setiap penghujung hari.</p>
+                  <div class="memory-quote">"Every word from you brings me one step closer to home."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EPISODE 9 -->
+          <div class="timeline-item left">
+            <div class="memory-flip-card" onclick="this.classList.toggle('is-flipped')">
+              <div class="memory-flip-inner">
+                <div class="memory-card-front">
+                  <span class="memory-tag">EPISODE 09</span>
+                  <div class="memory-date">September 2026</div>
+                  <div class="memory-photo-container">
+                    <img src="Photo5.jpg" alt="Titik Nyala" onerror="this.src='https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <h3>Titik Nyala</h3>
+                  <div class="flip-hint">↺ Sentuh untuk membalik</div>
+                </div>
+                <div class="memory-card-back">
+                  <span class="memory-tag">EPISODE 09</span>
+                  <div class="memory-date">September 2026</div>
+                  <h3>Titik Nyala</h3>
+                  <p>Hari ketika bumi menyambut seseorang yang amat istimewa. Selamat ulang tahun sayangku♡, Terima kasih telah lahir dan membawa warna indah yang tak pernah ada sebelumnya di hidupku.</p>
+                  <div class="memory-quote">"You are the most beautiful part of my story."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EPISODE 10 -->
+          <div class="timeline-item right">
+            <div class="memory-flip-card" onclick="this.classList.toggle('is-flipped')">
+              <div class="memory-flip-inner">
+                <div class="memory-card-front">
+                  <span class="memory-tag">EPISODE 10</span>
+                  <div class="memory-date">FUTURE</div>
+                  <div class="memory-photo-container">
+                    <img src="Photo4.jpg" alt="Masa Depan" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <h3>Mengubah Bayangan Jadi Nyata</h3>
+                  <div class="flip-hint">↺ Sentuh untuk membalik</div>
+                </div>
+                <div class="memory-card-back">
+                  <span class="memory-tag">EPISODE 10</span>
+                  <div class="memory-date">FUTURE</div>
+                  <h3>Mengubah Bayangan Jadi Nyata</h3>
+                  <p>Ketika deretan kata di balik layar ponsel akhirnya berganti menjadi tatapan mata langsung, suara tawa yang nyata, dan langkah kaki yang berjalan berdampingan di bawah langit yang sama.</p>
+                  <div class="memory-quote">"Our story began behind screens, but its forever will be lived right beside you."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER 03: 3D DIARY BOOK & PREMIUM MUSIC PLAYER -->
+    <section id="chapter3" class="chapter-block locked">
+      <div class="chapter-lock-overlay">
+        <div class="lock-overlay-card">
+          <div class="icon">🔒</div>
+          <h3>Chapter 03 Masih Terkunci</h3>
+          <p>Lanjutkan perjalananmu di atas untuk membuka buku harian 3D ini.</p>
+        </div>
+      </div>
+
+      <div class="chapter-content">
+        <h2 class="section-title">03 — The Book of Us</h2>
+        <p class="section-subtitle">Play dulu Musiknya, Trus Buka gembok bukunya pake Kunci yang ada.</p>
+
+        <!-- PREMIUM 3D MUSIC PLAYER CARD -->
+        <div class="player-card-3d" id="playerCard3d">
+          <div class="music-bar-container">
+            <div class="music-main-info">
+              <div class="vinyl-disc" id="vinylDisc"></div>
+              <div class="track-details">
+                <h4>Perfect</h4>
+                <p id="audio-status-label">Ed Sheeran — Our Romantic Melody</p>
+                <div class="audio-spectrum">
+                  <div class="spectrum-bar"></div>
+                  <div class="spectrum-bar"></div>
+                  <div class="spectrum-bar"></div>
+                  <div class="spectrum-bar"></div>
+                  <div class="spectrum-bar"></div>
+                </div>
+              </div>
+              <button class="play-control-btn" id="playAudioBtn" aria-label="Play Music">▶</button>
+            </div>
+            
+            <div class="progress-container">
+              <span class="time-stamp" id="currentTimeLabel">0:00</span>
+              <div class="progress-bar-bg" id="progressBarBg">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+              <span class="time-stamp" id="durationLabel">4:23</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===================================================
+             3D DIARY BOOK — SPREAD REBUILT WITH TWIST LOCK FIX
+             =================================================== -->
+        <div class="book-outer-container" id="bookOuter">
+
+          <!-- Key dock / instruction bar -->
+          <div class="key-dock-wrapper" id="keyDockWrapper">
+            <div class="key-dock-instruction">
+              <span class="dock-emoji">🔑</span>
+              <span id="keyDockInstructionText">Tarik kunci emas ini, trus masukkan ke lubang gembok buku.</span>
+            </div>
+            <div class="key-slot" id="keySlot" aria-hidden="true"></div>
+          </div>
+
+          <!-- BOOK STAGE (Lebar 2 Halaman, Bisa melebar tengah "is-open") -->
+          <div class="book-stage" id="bookStage">
+            <div class="book-spine-slab"></div>
+            <div class="page-block-edge left" id="pageEdgeLeft"></div>
+            <div class="page-block-edge" id="pageBlockEdge"></div>
+
+            <div class="book-block" id="bookBlock">
+              <div class="ribbon-bookmark" id="ribbonBookmark"></div>
+
+              <!-- Inner back cover (right side, revealed at the end) -->
+              <div class="book-base">
+                <span>♡</span>
+                <span>THE END</span>
+              </div>
+
+              <!-- ============ LEAF 0 — FRONT COVER ============ -->
+              <article class="leaf cover-leaf" data-page="cover">
+                <div class="leaf-front">
+                  <div class="cover-frame">
+                    <img src="cover.png" alt="Catatan Kecil Kita — sampul buku"
+                         onerror="this.onerror=null; this.src='cover.jpg';" />
+                    <div class="cover-sheen"></div>
+                    <div class="cover-caption">The Book of Us — Volume I</div>
+                  </div>
+                  <div class="turn-shade"></div>
+                </div>
+                <div class="leaf-back">
+                  <!-- Empty inner cover -->
+                </div>
+              </article>
+
+              <!-- ============ LEAF 1: PAGE 01 & 02 ============ -->
+              <article class="leaf" data-page="1">
+                <!-- Sisi Kanan (Page 1) -->
+                <div class="leaf-front">
+                  <div class="page-heading">The Beginning</div>
+                  <div class="page-photo-frame">
+                    <img src="Diary1.jpg" alt="Diary 1" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <div class="page-body">
+                    <p>Mungkin semua ini tidak pernah direncanakan.</p>
+                    <p>Kita tidak pernah benar-benar tahu bahwa dari sekian banyak manusia yang berjalan di dunia ini, akan ada satu orang yang perlahan menjadi begitu penting dalam hidup kita.</p>
+                    <p>Awalnya mungkin hanya sebuah pertemuan biasa dari sebuah platform digital. Sebuah percakapan. Sebuah senyuman. Sebuah pesan sederhana.</p>
+                    <p>Tapi entah bagaimana, dari hal-hal kecil itu, sebuah cerita mulai tumbuh. Dan tanpa aku sadari, kamu mulai menjadi bagian dari hari-hariku.</p>
+                  </div>
+                  <div class="page-num">— 1 —</div>
+                  <div class="turn-shade"></div>
+                </div>
+                <!-- Sisi Kiri Setelah Dibalik (Page 2) -->
+                <div class="leaf-back">
+                  <div class="page-heading">The Little Things</div>
+                  <div class="page-photo-frame">
+                    <img src="Diary2.jpg" alt="Diary 2" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <div class="page-body">
+                    <p>Ada banyak hal besar yang mungkin suatu hari akan kita ingat. Tapi anehnya, yang paling sering tersimpan justru adalah hal-hal kecil.</p>
+                    <p>Cara kita tertawa, percakapan yang sebenarnya tidak penting, waktu-waktu ketika kita hanya chit-chat membahas hal-hal yang kita sendiri tidak tau arahnya kemana.</p>
+                    <p>Hal-hal yang kadang terkesan membingungkan, pesan sederhana yang muncul di saat yang tepat. Dan mungkin itulah yang membuat semuanya terasa begitu berharga. Karena bersamamu, bahkan hari yang biasa saja bisa berubah menjadi sebuah kenangan.</p>
+                  </div>
+                  <div class="page-num">— 2 —</div>
+                  <div class="turn-shade"></div>
+                </div>
+              </article>
+
+              <!-- ============ LEAF 2: PAGE 03 & 04 ============ -->
+              <article class="leaf" data-page="2">
+                <div class="leaf-front">
+                  <div class="page-heading">You</div>
+                  <div class="page-photo-frame">
+                    <img src="Diary3.jpg" alt="Diary 3" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <div class="page-body">
+                    <p>Aku tidak tahu apakah aku selalu bisa menjadi orang yang sempurna. Mungkin tidak.</p>
+                    <p>Aku juga tidak tahu apakah aku selalu bisa mengatakan hal yang tepat di setiap keadaan. Mungkin aku sering membuatmu kesal, mungkin pernah membuatmu sedih, mungkin pernah membuatmu bertanya-tanya.</p>
+                    <p>Tapi ada satu hal yang aku ingin kamu tahu. Di antara semua ketidaksempurnaanku, ada satu hal yang selalu ingin aku lakukan dengan sungguh-sungguh. Yaitu menjaga seseorang yang bernama kamu.</p>
+                  </div>
+                  <div class="page-num">— 3 —</div>
+                  <div class="turn-shade"></div>
+                </div>
+                <div class="leaf-back">
+                  <div class="page-heading">If Life Gets Hard</div>
+                  <div class="page-photo-frame">
+                    <img src="Diary4.jpg" alt="Diary 4" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <div class="page-body">
+                    <p>Suatu hari nanti, mungkin hidup tidak selalu berjalan seperti yang kita inginkan. Akan ada hari yang melelahkan. Ada hari ketika semuanya terasa berat. Ada hari ketika kita ingin menyerah. Dan mungkin akan ada saat ketika kita tidak selalu mengerti satu sama lain.</p>
+                    <p>Tapi kalau suatu hari itu datang, aku berharap kita tidak lupa bagaimana semua ini dimulai.</p>
+                    <p>Aku berharap kita masih bisa saling mengingat bahwa sebelum semua hal yang rumit itu datang, pernah ada dua orang yang hanya merasa bahagia karena bisa saling menemukan.</p>
+                    <p>Dan aku berharap, di antara semua alasan untuk pergi, kita selalu menemukan satu alasan untuk tetap tinggal.</p>
+                  </div>
+                  <div class="page-num">— 4 —</div>
+                  <div class="turn-shade"></div>
+                </div>
+              </article>
+
+              <!-- ============ LEAF 3: PAGE 05 & 06 ============ -->
+              <article class="leaf" data-page="3">
+                <div class="leaf-front">
+                  <div class="page-heading">Today</div>
+                  <div class="page-photo-frame">
+                    <img src="Diary5.jpg" alt="Diary 5" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <div class="page-body">
+                    <p>Hari ini adalah hari ulang tahunmu. Satu hari dalam setahun yang mengingatkan dunia bahwa pada hari ini, seseorang yang sangat berarti bagiku hadir ke dunia.</p>
+                    <p>Dan beruntungnya, karena orang itu adalah kamu. YA, Kamu... Kelinci Madu-ku ♡</p>
+                    <p>Aku tidak tahu hadiah apa yang paling sempurna. Aku juga tidak tahu apakah kata-kata ini cukup untuk menjelaskan semua yang ingin aku sampaikan.</p>
+                    <p>Jadi aku membuat tempat kecil ini. Sebuah tempat yang berisi beberapa pernyataan, beberapa kenangan, sebuah lagu, dan sekarang, halaman-halaman kecil dari sesuatu yang sebenarnya jauh lebih besar dari sebuah website sederhana ini. Sebuah cerita tentang kita.</p>
+                  </div>
+                  <div class="page-num">— 5 —</div>
+                  <div class="turn-shade"></div>
+                </div>
+                <div class="leaf-back">
+                  <div class="page-heading">The Future</div>
+                  <div class="page-photo-frame">
+                    <img src="Diary6.jpg" alt="Diary 6" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1469371670807-013ccf25f16a?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <div class="page-body">
+                    <p>Aku tidak tahu persis seperti apa masa depan nanti.</p>
+                    <p>Aku tidak tahu ke mana jalan hidup akan membawa kita. Berapa banyak tempat yang akan kita kunjungi, berapa banyak angan yang akan kita gapai, berapa banyak mimpi yang akan kita kejar, dan berapa banyak cerita baru yang masih menunggu untuk ditulis.</p>
+                    <p>Tapi kalau aku boleh meminta satu hal dari masa depan, aku berharap kamu masih ada di dalamnya.</p>
+                    <p>Bukan hanya sebagai sebuah kenangan, bukan hanya sebagai seseorang yang pernah hadir. Tetapi sebagai seseorang yang masih bisa aku ajak tertawa, berbagi cerita, membuat rencana, dan menciptakan kenangan baru.</p>
+                  </div>
+                  <div class="page-num">— 6 —</div>
+                  <div class="turn-shade"></div>
+                </div>
+              </article>
+
+              <!-- ============ LEAF 4: PAGE 07 & INNER BACK ============ -->
+              <article class="leaf" data-page="4">
+                <div class="leaf-front">
+                  <div class="page-heading">Happy Birthday</div>
+                  <div class="page-photo-frame">
+                    <img src="Diary7.jpg" alt="Diary 7" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80'" />
+                  </div>
+                  <div class="page-body">
+                    <p>Jadi hari ini... di hari ulang tahunmu... aku tidak hanya ingin mengatakan, “Selamat ulang tahun.”</p>
+                    <p>Aku ingin mengatakan: Terima kasih karena sudah hadir. Terima kasih karena sudah menjadi dirimu sendiri. Terima kasih untuk semua tawa, cerita, kenangan, dan waktu yang sudah kita bagi. Dan terima kasih karena, dari begitu banyak kemungkinan yang ada di dunia ini... entah bagaimana... aku bisa menemukanmu.</p>
+                    <p>Semoga di usia yang baru ini, kamu mendapatkan lebih banyak alasan untuk tersenyum. Lebih banyak mimpi yang menjadi nyata, lebih banyak kebahagiaan, dan lebih banyak hari-hari indah.</p>
+                    <p>Dan kalau suatu hari nanti kamu kembali membuka halaman ini... aku harap kamu tetap tersenyum untuk kesekian kalinya. Karena di suatu waktu, pernah ada seseorang yang membuat semua ini... hanya agar kamu tahu, bahwa kamu begitu berarti.</p>
+                    <p style="margin-top: 10px; color: #b83280; font-weight: 700;">Selamat ulang tahun, sayang. Untuk hari ini, untuk cerita kita yang sudah berlalu, dan untuk semua halaman indah yang belum kita tulis. ♡♡♡</p>
+                    <p style="font-style: italic; font-size: 0.92em; color: #6b6275; margin-top: 6px;">Untukmu yang terkasih, Rahma "Puspita Ayu-ku" — Dari seseorang yang selalu berharap bisa menjadi bagian dari cerita indahmu.</p>
+                  </div>
+                  <div class="page-num">— 7 —</div>
+                  <div class="turn-shade"></div>
+                </div>
+                <div class="leaf-back" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+                  <span style="font-size: 2.2rem; color: #ac2f72; margin-bottom: 15px;">♡</span>
+                  <p style="color: #8d7c60; font-family: 'Playfair Display', serif; font-size: 1.15rem; font-style: italic;">"You are the best part of my story."</p>
+                </div>
+              </article>
+
+              <div class="gutter-shadow" id="gutterShadow"></div>
+            </div>
+
+            <!-- Invisible flip zones -->
+            <div class="book-tap-zone left" id="bookTapLeft">
+              <span class="tap-hint-badge left-badge is-off" id="hintPrev"> </span>
+            </div>
+            <div class="book-tap-zone right" id="bookTapRight">
+              <span class="tap-hint-badge right-badge" id="hintNext"> </span>
+            </div>
+          </div>
+
+          <!-- ===== LEATHER STRAP + REALISTIC BRASS PADLOCK ===== -->
+          <div class="strap-layer" id="strapLayer">
+            <div class="strap-band"></div>
+            <div class="strap-buckle"></div>
+          </div>
+
+          <div class="lock-assembly" id="lockAssembly">
+            <div class="padlock" id="padlockEl">
+              <svg viewBox="0 0 100 132" xmlns="http://www.w3.org/2000/svg" aria-label="Gembok buku">
+                <defs>
+                  <linearGradient id="steelGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%"   stop-color="#6c7482"/>
+                    <stop offset="22%"  stop-color="#eef2f7"/>
+                    <stop offset="48%"  stop-color="#aeb7c4"/>
+                    <stop offset="74%"  stop-color="#7e8797"/>
+                    <stop offset="100%" stop-color="#4c5361"/>
+                  </linearGradient>
+                  <linearGradient id="brassGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%"   stop-color="#ffeec2"/>
+                    <stop offset="18%"  stop-color="#f0c877"/>
+                    <stop offset="52%"  stop-color="#c9992f"/>
+                    <stop offset="78%"  stop-color="#a1751d"/>
+                    <stop offset="100%" stop-color="#6f4f10"/>
+                  </linearGradient>
+                  <linearGradient id="brassSheen" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.55"/>
+                    <stop offset="35%"  stop-color="#ffffff" stop-opacity="0.08"/>
+                    <stop offset="100%" stop-color="#000000" stop-opacity="0.35"/>
+                  </linearGradient>
+                  <radialGradient id="holeGrad" cx="50%" cy="35%" r="70%">
+                    <stop offset="0%"   stop-color="#4a3a16"/>
+                    <stop offset="55%"  stop-color="#1a1207"/>
+                    <stop offset="100%" stop-color="#000000"/>
+                  </radialGradient>
+                </defs>
+
+                <!-- Shackle -->
+                <g class="shackle-group">
+                  <path d="M28 60 V40 a22 22 0 0 1 44 0 V60"
+                        fill="none" stroke="#2b3038" stroke-width="16" stroke-linecap="round"/>
+                  <path d="M28 60 V40 a22 22 0 0 1 44 0 V60"
+                        fill="none" stroke="url(#steelGrad)" stroke-width="12.5" stroke-linecap="round"/>
+                  <path d="M33 54 V40 a17 17 0 0 1 34 0 V54"
+                        fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+                </g>
+
+                <!-- Body -->
+                <rect x="9" y="54" width="82" height="72" rx="15" fill="#5c400d"/>
+                <rect x="11" y="56" width="78" height="68" rx="13" fill="url(#brassGrad)"/>
+                <rect x="11" y="56" width="78" height="68" rx="13" fill="url(#brassSheen)"/>
+                <rect x="16" y="61" width="68" height="58" rx="10" fill="none"
+                      stroke="#ffffff" stroke-opacity="0.28" stroke-width="1.4"/>
+
+                <!-- Rivets -->
+                <circle cx="20.5" cy="65.5" r="3" fill="#8a681c"/>
+                <circle cx="20.5" cy="65.5" r="1.6" fill="#ffe9ae" fill-opacity="0.8"/>
+                <circle cx="79.5" cy="65.5" r="3" fill="#8a681c"/>
+                <circle cx="79.5" cy="65.5" r="1.6" fill="#ffe9ae" fill-opacity="0.8"/>
+                <circle cx="20.5" cy="114.5" r="3" fill="#8a681c"/>
+                <circle cx="20.5" cy="114.5" r="1.6" fill="#ffe9ae" fill-opacity="0.8"/>
+                <circle cx="79.5" cy="114.5" r="3" fill="#8a681c"/>
+                <circle cx="79.5" cy="114.5" r="1.6" fill="#ffe9ae" fill-opacity="0.8"/>
+
+                <!-- Engraved initials -->
+                <text x="50" y="112" text-anchor="middle" font-family="Playfair Display, serif"
+                      font-size="13" font-weight="700" fill="#6d4e10" fill-opacity="0.75">D ♡ R</text>
+
+                <!-- Keyhole target -->
+                <circle class="keyhole-halo" cx="50" cy="84" r="20"
+                        fill="none" stroke="#55e8ff" stroke-width="2.5" stroke-dasharray="5 5"/>
+                <g id="keyholeTarget">
+                  <ellipse cx="50" cy="84" rx="13" ry="12.5" fill="#7d5c13"/>
+                  <path d="M50 74.5 a8 8 0 0 1 4.6 14.6 L57 95 H43 l2.4-5.9 A8 8 0 0 1 50 74.5 Z"
+                        fill="url(#holeGrad)"/>
+                  <path d="M45.5 78.5 a6 6 0 0 1 4-3.2" stroke="#ffe9ae" stroke-opacity="0.35"
+                        stroke-width="1.4" fill="none" stroke-linecap="round"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <!-- ===== THE GOLDEN KEY ===== -->
+          <div class="key-actor idle-hint" id="keyActor" role="button" tabindex="0"
+               aria-label="Kunci emas — geser atau klik buat membuka gembok"
+               title="Geser kunci ini ke lubang gembok (atau cukup Klik)">
+            <svg viewBox="0 0 115 60" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="goldKey" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%"   stop-color="#fff3cf"/>
+                  <stop offset="28%"  stop-color="#f3c77c"/>
+                  <stop offset="62%"  stop-color="#d09f38"/>
+                  <stop offset="100%" stop-color="#8a6512"/>
+                </linearGradient>
+              </defs>
+              <g stroke="#6f5210" stroke-width="1.3" stroke-linejoin="round">
+                <circle cx="30" cy="30" r="25" fill="url(#goldKey)"/>
+                <path d="M30 41.5c-7-5-11.8-8.9-11.8-14.2 0-3.7 2.9-6.4 6.4-6.4 2.5 0 4.3 1.3 5.4 3.1 1.1-1.8 2.9-3.1 5.4-3.1 3.5 0 6.4 2.7 6.4 6.4 0 5.3-4.8 9.2-11.8 14.2z"
+                      fill="#160b26" stroke="none"/>
+                <rect x="52" y="16" width="8" height="28" rx="3" fill="url(#goldKey)"/>
+                <rect x="54" y="25" width="52" height="10" rx="4" fill="url(#goldKey)"/>
+                <rect x="84" y="35" width="9" height="13" rx="2" fill="url(#goldKey)"/>
+                <rect x="96" y="35" width="8" height="9" rx="2" fill="url(#goldKey)"/>
+              </g>
+              <path d="M106 25.5 L112 30 L106 34.5 Z" fill="#e0b257"/>
+              <rect x="56" y="26" width="48" height="2.8" rx="1.4" fill="#ffffff" fill-opacity="0.55"/>
+            </svg>
+            <span class="key-tip-marker" id="keyTip"></span>
+          </div>
+
+          <!-- ===== READER CONTROLS ===== -->
+          <div class="book-controls">
+            <button class="book-nav-btn" id="bookPrevBtn" aria-label="Halaman sebelumnya" disabled>❮</button>
+            <div class="book-progress-wrap">
+              <div class="book-progress-track">
+                <div class="book-progress-bar" id="bookProgressBar"></div>
+              </div>
+            </div>
+            <button class="book-nav-btn" id="bookNextBtn" aria-label="Halaman berikutnya" disabled>❯</button>
+          </div>
+
+        </div>
+
+        <!-- ONE LAST LOVE NOTE -->
+        <div class="final-love-note glass">
+          <strong>♥ One Last Love Note ♥</strong>
+          Kalau suatu hari nanti kamu lupa betapa berharganya dirimu, buka halaman ini lagi. Bukan karena halaman web ini istimewa, tapi karena semua yang ada di sini dibuat dari kenangan yang menurutku pantas untuk dijaga.
+          <br><br>
+          <strong>Selamat ulang tahun, sayang. ♡</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+      made with too much love <span>♥</span>
+    </footer>
+
+  </main>
+
+  <!-- BACKGROUND AUDIO ELEMENTS -->
+  <audio id="bgm0" loop src="Chapter0.mp3"></audio>
+  <audio id="bgm1" loop src="Chapter1.mp3"></audio>
+  <audio id="bgm2" loop src="Chapter2.mp3"></audio>
+  <audio id="bgm3" src="Perfect.mp3"></audio>
+
+  <script>
+    /* =========================================================
+       1. FLOATING ELEMENTS ENGINE
+       ========================================================= */
+    function initFloatingElements() {
+      const container = document.getElementById('floating-container');
+      if (!container) return;
+      container.innerHTML = '';
+      
+      const emojis = ['🎈', '💖', '🎂', '✨', '💕', '🎁', '🌸', '⭐'];
+      const count = 26;
+
+      for (let i = 0; i < count; i++) {
+        const item = document.createElement('div');
+        item.className = 'floating-item';
+        item.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        item.style.left = `${Math.random() * 94 + 2}vw`;
+        item.style.animationDuration = `${Math.random() * 5 + 6}s`;
+        item.style.animationDelay = `${Math.random() * 5}s`;
+        item.style.fontSize = `${Math.random() * 14 + 18}px`;
+        container.appendChild(item);
+      }
+    }
+
+    /* =========================================================
+       2. TOAST NOTIFICATION CONTROLLER
+       ========================================================= */
+    function showToast(message) {
+      const toast = document.getElementById('toastBanner');
+      const toastText = document.getElementById('toastText');
+      if (!toast || !toastText) return;
+      
+      toastText.textContent = message;
+      toast.classList.add('show');
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+    }
+
+    /* =========================================================
+       3. AUDIO ENGINE & CHAPTER SOUND MANAGERS
+       ========================================================= */
+    const bgm0 = document.getElementById('bgm0');
+    const bgm1 = document.getElementById('bgm1');
+    const bgm2 = document.getElementById('bgm2');
+    const bgm3 = document.getElementById('bgm3');
+
+    let activeChapterAudio = null;
+    let isMusicPlayed = false;
+
+    function playAudio(audioEl) {
+      if (!audioEl) return;
+      if (bgm3 && !bgm3.paused) return; 
+
+      if (activeChapterAudio && activeChapterAudio !== audioEl) {
+        activeChapterAudio.pause();
+        activeChapterAudio.currentTime = 0;
+      }
+
+      audioEl.play().then(() => {
+        activeChapterAudio = audioEl;
+      }).catch((err) => {
+        console.log("Autoplay waiting for interaction...");
+      });
+    }
+
+    function initChapter0Audio() {
+      playAudio(bgm0);
+
+      const enableSoundOnInteraction = () => {
+        if (!activeChapterAudio || (activeChapterAudio === bgm0 && bgm0.paused)) {
+          playAudio(bgm0);
+        }
+        document.removeEventListener('click', enableSoundOnInteraction);
+        document.removeEventListener('touchstart', enableSoundOnInteraction);
+      };
+
+      document.addEventListener('click', enableSoundOnInteraction);
+      document.addEventListener('touchstart', enableSoundOnInteraction);
+    }
+
+    /* =========================================================
+       4. CHAPTER 1: LOCK & FLOATING QUIZ POPUP CONTROLLER
+       ========================================================= */
+    const quizData = [
+      { question: "Tempat atau momen apa yang paling identik dengan awal cerita kita?", answers: ["Tempat pertama kita bertemu", "Tempat liburan pertama", "Tempat favorit kita nongkrong"], correct: 0 },
+      { question: "Apa hal kecil tentang aku yang paling sering kamu ingat?", answers: ["Cara aku bercanda konyol", "Panggilan sayang khusus untukmu", "Semuanya benar ♡"], correct: 2 },
+      { question: "Kalau harus memilih satu tujuan untuk cerita kita berikutnya?", answers: ["Lebih banyak petualangan seru", "Lebih banyak waktu berkualitas berdua", "Keduanya tanpa ragu!"], correct: 2 },
+      { question: "Momen apa yang paling bikin kamu tersenyum sendiri kalau diingat?", answers: ["Tingkah konyolku saat salah tingkah", "Kejutan kecil tak terduga dariku", "Obrolan mendalam dari hati ke hati"], correct: 2 },
+      { question: "Kalau perjalanan kita dijadikan genre film, apa yang paling pas?", answers: ["Komedi Romantis yang hangat", "Petualangan seru nan manis", "Drama romantis yang bikin baper"], correct: 0 },
+      { question: "Hal apa yang paling membuatmu merasa hangat dalam hubungan ini?", answers: ["Perhatian kecil sehari-hari", "Kejutan manis di saat tak terduga", "Waktu berharga yang kita lewati bersama"], correct: 2 },
+      { question: "Janji apa yang paling ingin kamu genggam bersama untuk masa depan?", answers: ["Selalu jujur dan saling mendukung", "Selalu ada di setiap keadaan", "Tumbuh, bahagia, dan menua bersama"], correct: 2 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let isAnswered = false;
+    let quizUnlocked = false;
+
+    const mainLock = document.getElementById('mainLock');
+    const quizModalOverlay = document.getElementById('quizModalOverlay');
+    const lockPromptText = document.getElementById('lockPromptText');
+    const quizCountText = document.getElementById('quiz-count-text');
+    const quizProgressFill = document.getElementById('quiz-progress-fill');
+    const quizQuestionText = document.getElementById('quiz-question-text');
+    const quizOptionsContainer = document.getElementById('quiz-options-container');
+    const quizFeedbackText = document.getElementById('quiz-feedback-text');
+    const flashOverlay = document.getElementById('flash-overlay');
+
+    const chapter2 = document.getElementById('chapter2');
+    const chapter3 = document.getElementById('chapter3');
+
+    function revealQuizPanel() {
+      if (!quizUnlocked) {
+        quizUnlocked = true;
+        mainLock.classList.add('unlocked');
+        lockPromptText.textContent = "✦ PERTANYAAN TERBUKA ✦";
+        
+        if (bgm0) { bgm0.pause(); bgm0.currentTime = 0; }
+        playAudio(bgm1);
+
+        setTimeout(() => {
+          quizModalOverlay.classList.add('active');
+          renderQuestion();
+        }, 300);
+      } else {
+        quizModalOverlay.classList.add('active');
+      }
+    }
+
+    function renderQuestion() {
+      isAnswered = false;
+      const data = quizData[currentQuestionIndex];
+
+      quizCountText.textContent = `Question ${currentQuestionIndex + 1} / ${quizData.length}`;
+      quizProgressFill.style.width = `${((currentQuestionIndex + 1) / quizData.length) * 100}%`;
+      quizQuestionText.textContent = data.question;
+      quizOptionsContainer.innerHTML = '';
+      quizFeedbackText.textContent = '';
+
+      data.answers.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn';
+        btn.textContent = optText;
+        btn.onclick = () => selectOption(idx, btn);
+        quizOptionsContainer.appendChild(btn);
+      });
+    }
+
+    function selectOption(selectedIdx, btnElement) {
+      if (isAnswered) return;
+      const data = quizData[currentQuestionIndex];
+
+      if (selectedIdx === data.correct) {
+        isAnswered = true;
+        btnElement.classList.add('correct');
+        quizFeedbackText.style.color = '#55e8ff';
+        quizFeedbackText.textContent = 'Jawaban benar! Kunci berikutnya terbuka... ✨';
+
+        setTimeout(() => {
+          if (currentQuestionIndex < quizData.length - 1) {
+            currentQuestionIndex++;
+            renderQuestion();
+          } else {
+            completeQuizAndUnlock();
+          }
+        }, 700);
+      } else {
+        btnElement.classList.add('wrong');
+        mainLock.classList.add('shake');
+        quizFeedbackText.style.color = '#ff5b78';
+        quizFeedbackText.textContent = 'Hmm... coba ingat-ingat lagi kenangan manis kita. ♡';
+
+        setTimeout(() => {
+          btnElement.classList.remove('wrong');
+          mainLock.classList.remove('shake');
+        }, 500);
+      }
+    }
+
+    function completeQuizAndUnlock() {
+      document.getElementById('quiz-status-badge').textContent = "🔓 UNLOCKED";
+      quizModalOverlay.classList.remove('active');
+
+      flashOverlay.classList.add('active');
+      setTimeout(() => flashOverlay.classList.remove('active'), 900);
+
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 180, spread: 100, origin: { y: 0.5 } });
+      }
+
+      chapter2.classList.remove('locked');
+      chapter3.classList.remove('locked');
+
+      if (bgm1) { bgm1.pause(); bgm1.currentTime = 0; }
+      playAudio(bgm2);
+
+      setTimeout(() => {
+        chapter2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 700);
+    }
+
+    /* =========================================================
+       5. PREMIUM MUSIC PLAYER CONTROLLER 
+       ========================================================= */
+    const playAudioBtn = document.getElementById('playAudioBtn');
+    const vinylDisc = document.getElementById('vinylDisc');
+    const audioStatusLabel = document.getElementById('audio-status-label');
+    const currentTimeLabel = document.getElementById('currentTimeLabel');
+    const durationLabel = document.getElementById('durationLabel');
+    const progressFill = document.getElementById('progressFill');
+    const progressBarBg = document.getElementById('progressBarBg');
+    const playerCard3d = document.getElementById('playerCard3d');
+
+    function formatTime(sec) {
+      if (isNaN(sec)) return "0:00";
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    playAudioBtn.addEventListener('click', () => {
+      if (bgm0) bgm0.pause();
+      if (bgm1) bgm1.pause();
+      if (bgm2) bgm2.pause();
+
+      if (bgm3.paused) {
+        bgm3.play().then(() => {
+          isMusicPlayed = true; 
+          playAudioBtn.textContent = '❚❚';
+          vinylDisc.classList.add('playing');
+          audioStatusLabel.textContent = "Playing — Perfect (Ed Sheeran)";
+          playerCard3d.classList.remove('highlight-pulse');
+          showToast("🎶 Musik sedang diputar! Sekarang kamu bisa membuka buku harian.");
+        }).catch(() => {
+          isMusicPlayed = true;
+          vinylDisc.classList.add('playing');
+          playAudioBtn.textContent = '❚❚';
+          audioStatusLabel.textContent = "Perfect — Ed Sheeran (Demo Mode)";
+          showToast("🎶 Musik diputar. Kamu bisa membuka buku harian!");
+        });
+      } else {
+        bgm3.pause();
+        playAudioBtn.textContent = '▶';
+        vinylDisc.classList.remove('playing');
+        audioStatusLabel.textContent = "Ed Sheeran — Our Romantic Melody";
+        if (activeChapterAudio) playAudio(activeChapterAudio);
+      }
+    });
+
+    bgm3.addEventListener('timeupdate', () => {
+      if (bgm3.duration) {
+        const pct = (bgm3.currentTime / bgm3.duration) * 100;
+        progressFill.style.width = `${pct}%`;
+        currentTimeLabel.textContent = formatTime(bgm3.currentTime);
+        durationLabel.textContent = formatTime(bgm3.duration);
+      }
+    });
+
+    progressBarBg.addEventListener('click', (e) => {
+      if (!bgm3.duration) return;
+      const rect = progressBarBg.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const pct = clickX / rect.width;
+      bgm3.currentTime = pct * bgm3.duration;
+    });
+
+    /* =========================================================
+       6. MICRO SOUND ENGINE
+       ========================================================= */
+    const SFX = (function () {
+      let ctx = null;
+      function ac() {
+        try {
+          if (!ctx) {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return null;
+            ctx = new AC();
+          }
+          if (ctx.state === 'suspended') ctx.resume();
+          return ctx;
+        } catch (e) { return null; }
+      }
+
+      function noiseBuffer(c, dur) {
+        const len = Math.max(1, Math.floor(c.sampleRate * dur));
+        const buf = c.createBuffer(1, len, c.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+        return buf;
+      }
+
+      function burst(o) {
+        const c = ac(); if (!c) return;
+        const dur = o.dur || 0.2, t = c.currentTime + (o.delay || 0);
+        const src = c.createBufferSource(); src.buffer = noiseBuffer(c, dur);
+        const flt = c.createBiquadFilter();
+        flt.type = o.type || 'bandpass';
+        flt.Q.value = o.q || 1;
+        flt.frequency.setValueAtTime(o.f0 || 900, t);
+        flt.frequency.exponentialRampToValueAtTime(Math.max(60, o.f1 || o.f0 || 900), t + dur);
+        const g = c.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(o.gain || 0.1, t + dur * 0.18);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        src.connect(flt).connect(g).connect(c.destination);
+        src.start(t); src.stop(t + dur + 0.03);
+      }
+
+      function ping(o) {
+        const c = ac(); if (!c) return;
+        const dur = o.dur || 0.1, t = c.currentTime + (o.delay || 0);
+        const osc = c.createOscillator();
+        osc.type = o.type || 'square';
+        osc.frequency.setValueAtTime(o.f || 800, t);
+        if (o.slide) osc.frequency.exponentialRampToValueAtTime(o.slide, t + dur);
+        const g = c.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(o.gain || 0.1, t + 0.008);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        osc.connect(g).connect(c.destination);
+        osc.start(t); osc.stop(t + dur + 0.03);
+      }
+
+      return {
+        page()   { burst({ dur: 0.42, type: 'bandpass', f0: 520,  f1: 2600, q: 0.7, gain: 0.10 }); },
+        swoosh() { burst({ dur: 0.30, type: 'lowpass',  f0: 2200, f1: 500,  q: 0.8, gain: 0.05 }); },
+        insert() {
+          burst({ dur: 0.26, type: 'bandpass', f0: 2600, f1: 1100, q: 3, gain: 0.08 });
+          burst({ dur: 0.07, type: 'highpass', f0: 3200, f1: 3200, q: 1, gain: 0.06, delay: 0.17 });
+        },
+        turn()   {
+          burst({ dur: 0.18, type: 'bandpass', f0: 1400, f1: 700, q: 6, gain: 0.07 });
+          ping({ f: 240, dur: 0.05, gain: 0.05, delay: 0.10, type: 'square' });
+        },
+        click()  {
+          ping({ f: 1800, dur: 0.05, gain: 0.11, type: 'square' });
+          ping({ f: 900,  dur: 0.06, gain: 0.07, type: 'square', delay: 0.05 });
+        },
+        clack()  {
+          ping({ f: 520, dur: 0.16, gain: 0.13, type: 'triangle', slide: 180 });
+          burst({ dur: 0.12, type: 'highpass', f0: 2600, f1: 1500, q: 1, gain: 0.07 });
+        },
+        strap()  { burst({ dur: 0.5, type: 'lowpass', f0: 900, f1: 120, q: 0.6, gain: 0.09 }); }
+      };
+    })();
+
+    const wait = (ms) => new Promise(res => setTimeout(res, ms));
+
+    /* =========================================================
+       7. THE GOLDEN KEY → PADLOCK UNLOCK CHOREOGRAPHY (FIXED TWIST)
+       ========================================================= */
+    const bookOuter             = document.getElementById('bookOuter');
+    const keyActor              = document.getElementById('keyActor');
+    const keyTip                = document.getElementById('keyTip');
+    const keySlot               = document.getElementById('keySlot');
+    const padlockEl             = document.getElementById('padlockEl');
+    const keyholeTarget         = document.getElementById('keyholeTarget');
+    const lockAssembly          = document.getElementById('lockAssembly');
+    const strapLayer            = document.getElementById('strapLayer');
+    const keyDockWrapper        = document.getElementById('keyDockWrapper');
+    const keyDockInstructionText= document.getElementById('keyDockInstructionText');
+
+    let isBookUnlocked = false;
+    let keyBusy        = false;
+    let kx = 0, ky = 0;                 
+    const SNAP_RADIUS  = 100;
+    const TIP_INSET    = 4;      
+    const INSERT_DEPTH = 32;     
+
+    // Fungsi telah diupdate menggunakan sumbu rotX agar memutar ke kanan (twist ke dalam gembok)
+    function setKeyTransform(x, y, rot, scale, rotX = 0) {
+      keyActor.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg) rotateX(${rotX}deg) scale(${scale})`;
+    }
+
+    function setKeyInsertion(depth) {
+      keyActor.style.clipPath = `inset(-40px ${(TIP_INSET + depth).toFixed(1)}px -40px -40px)`;
+    }
+
+    function centerOf(el) {
+      const r = el.getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    }
+
+    function tipToHole() {
+      const a = centerOf(keyTip), b = centerOf(keyholeTarget);
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    }
+
+    function alignTipTo(offX, offY) {
+      const a = centerOf(keyTip), b = centerOf(keyholeTarget);
+      kx += (b.x + offX) - a.x;
+      ky += (b.y + offY) - a.y;
+    }
+
+    function placeKeyHome() {
+      if (keyBusy || isBookUnlocked) return;
+      const o = bookOuter.getBoundingClientRect();
+      const s = keySlot.getBoundingClientRect();
+      keyActor.style.transition = 'none';
+      keyActor.style.left = (s.left - o.left + (s.width  - keyActor.offsetWidth)  / 2) + 'px';
+      keyActor.style.top  = (s.top  - o.top  + (s.height - keyActor.offsetHeight) / 2) + 'px';
+      kx = 0; ky = 0;
+      keyActor.style.transformOrigin = '50% 50%';
+      keyActor.style.clipPath = 'none';
+      setKeyTransform(0, 0, 0, 1, 0);
+      requestAnimationFrame(() => { keyActor.style.transition = ''; });
+    }
+
+    let dragging = false, px0 = 0, py0 = 0, kx0 = 0, ky0 = 0, travelled = 0;
+
+    function musicGate() {
+      if (isMusicPlayed) return true;
+      showToast("🎵 Putar dulu lagunya, baru kuncinya bisa dipakai membuka buku.");
+      playerCard3d.classList.add('highlight-pulse');
+      playerCard3d.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      keyActor.classList.add('locked-out');
+      setTimeout(() => keyActor.classList.remove('locked-out'), 1400);
+      return false;
+    }
+
+    keyActor.addEventListener('pointerdown', (e) => {
+      if (isBookUnlocked || keyBusy) return;
+      if (!musicGate()) return;
+
+      dragging = true; travelled = 0;
+      px0 = e.clientX; py0 = e.clientY; kx0 = kx; ky0 = ky;
+      try { keyActor.setPointerCapture(e.pointerId); } catch (_) {}
+      keyActor.classList.add('dragging');
+      keyActor.classList.remove('idle-hint');
+      keySlot.classList.add('emptied');
+      keyActor.style.zIndex = 400;
+      keyDockInstructionText.textContent = "Arahkan ujung kunci tepat ke lubang gembok...";
+      e.preventDefault();
+    });
+
+    keyActor.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - px0, dy = e.clientY - py0;
+      travelled = Math.max(travelled, Math.hypot(dx, dy));
+      kx = kx0 + dx; ky = ky0 + dy;
+      setKeyTransform(kx, ky, -7, 1.06, 0);
+      padlockEl.classList.toggle('near', tipToHole() < SNAP_RADIUS);
+    });
+
+    function endDrag(e) {
+      if (!dragging) return;
+      dragging = false;
+      keyActor.classList.remove('dragging');
+      try { keyActor.releasePointerCapture(e.pointerId); } catch (_) {}
+
+      if (tipToHole() < SNAP_RADIUS) { runUnlockSequence(); return; }
+      if (travelled < 9)             { runUnlockSequence(true); return; }   
+
+      padlockEl.classList.remove('near');
+      keySlot.classList.remove('emptied');
+      keyActor.classList.add('idle-hint');
+      keyActor.style.zIndex = '';
+      keyDockInstructionText.textContent = "Belum kena — coba geser tepat ke lubang gemboknya. 🔑";
+      kx = 0; ky = 0;
+      setKeyTransform(0, 0, 0, 1, 0);
+    }
+
+    keyActor.addEventListener('pointerup', endDrag);
+    keyActor.addEventListener('pointercancel', endDrag);
+
+    keyActor.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      if (isBookUnlocked || keyBusy || !musicGate()) return;
+      runUnlockSequence(true);
+    });
+
+    /* ---------- The unlock choreography ---------- */
+    async function runUnlockSequence(autoFly) {
+      if (keyBusy || isBookUnlocked) return;
+      keyBusy = true;
+      dragging = false;
+
+      keyActor.classList.remove('idle-hint', 'dragging', 'locked-out');
+      keySlot.classList.add('emptied');
+      padlockEl.classList.add('near');
+      keyActor.style.zIndex = 400;
+      keyDockInstructionText.textContent = "Memasukkan kunci ke dalam gembok...";
+
+      keyActor.style.transition = 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)';
+      setKeyTransform(kx, ky, 0, 1, 0);
+      await wait(autoFly ? 250 : 370);
+
+      alignTipTo(-56, 0);
+      keyActor.style.transition = 'transform 0.62s cubic-bezier(0.33, 1, 0.5, 1)';
+      setKeyTransform(kx, ky, 0, 1, 0);
+      SFX.swoosh();
+      await wait(660);
+
+      keyActor.style.transition = 'transform 0.13s ease-in-out';
+      setKeyTransform(kx, ky - 4, 0, 1, 0); await wait(130);
+      setKeyTransform(kx, ky + 4, 0, 1, 0); await wait(130);
+      setKeyTransform(kx, ky,     0, 1, 0); await wait(130);
+
+      alignTipTo(0, 0);
+      setKeyInsertion(0);
+      keyActor.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+      setKeyTransform(kx, ky, 0, 1, 0);
+      await wait(320);
+
+      keyActor.style.transformOrigin = `calc(100% - ${TIP_INSET}px) 50%`;
+      kx += INSERT_DEPTH;
+      keyActor.style.transition = 'transform 0.62s cubic-bezier(0.55, 0, 0.3, 1),' +
+                                  ' clip-path 0.62s cubic-bezier(0.55, 0, 0.3, 1)';
+      setKeyTransform(kx, ky, 0, 1, 0);
+      setKeyInsertion(INSERT_DEPTH);
+      SFX.insert();
+      await wait(660);
+
+      padlockEl.classList.add('jiggle');
+      await wait(200);
+
+      /* FIX ANIMASI KUNCI: Sekarang diputar 3D ke sumbu X (-85deg) agar terlihat di twist ke kanan searah jarum jam */
+      keyActor.style.transition = 'transform 0.8s cubic-bezier(0.55, -0.25, 0.3, 1.35)';
+      setKeyTransform(kx, ky, 0, 1, -85); 
+      SFX.turn();
+      keyDockInstructionText.textContent = "Memutar kunci... klik!";
+      await wait(520);
+      SFX.click();
+      await wait(340);
+
+      padlockEl.classList.remove('jiggle', 'near');
+      padlockEl.classList.add('opened', 'snap');
+      SFX.clack();
+      keyDockInstructionText.textContent = "Gembok terbuka! ✨";
+      await wait(430);
+      padlockEl.classList.remove('snap');
+
+      keyActor.style.transition = 'transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)';
+      setKeyTransform(kx, ky, 0, 1, 0);
+      await wait(470);
+
+      kx -= INSERT_DEPTH;
+      keyActor.style.transition = 'transform 0.45s ease, clip-path 0.45s ease';
+      setKeyTransform(kx, ky, 0, 1, 0);
+      setKeyInsertion(0);
+      SFX.swoosh();
+      await wait(430);
+
+      keyActor.style.transition = 'transform 0.6s ease, opacity 0.6s ease';
+      setKeyTransform(kx - 70, ky - 14, -12, 0.9, 0);
+      keyActor.classList.add('spent');
+      await wait(260);
+
+      lockAssembly.classList.add('released');
+      strapLayer.classList.add('released');
+      SFX.strap();
+      await wait(700);
+      lockAssembly.style.display = 'none';
+      strapLayer.style.display = 'none';
+
+      finishUnlock();
+    }
+
+    function finishUnlock() {
+      isBookUnlocked = true;
+      keyBusy = false;
+
+      keyDockWrapper.classList.add('is-open');
+      keyDockInstructionText.textContent = "Buku terbuka — ketuk sisi buku, geser, atau pakai panah di bawah.";
+      bookStage.classList.add('readable');
+
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 150, spread: 95, origin: { y: 0.6 } });
+      }
+      showToast("📖 Buku harian terbuka! Ketuk sisi buku untuk membalik halaman.");
+
+      updateBookUI();
+      setTimeout(() => { if (turned === 0) turnNext(); }, 900);   
+    }
+
+    /* =========================================================
+       8. 3D PAGE-TURN ENGINE (FIXED FOR TWO PAGE SPREAD)
+       ========================================================= */
+    const bookStage        = document.getElementById('bookStage');
+    const bookBlock        = document.getElementById('bookBlock');
+    const gutterShadow     = document.getElementById('gutterShadow');
+    const pageBlockEdge    = document.getElementById('pageBlockEdge');
+    const ribbonBookmark   = document.getElementById('ribbonBookmark');
+    const bookPrevBtn      = document.getElementById('bookPrevBtn');
+    const bookNextBtn      = document.getElementById('bookNextBtn');
+    const bookProgressBar  = document.getElementById('bookProgressBar');
+    const pageEdgeLeft     = document.getElementById('pageEdgeLeft');
+    const hintPrev         = document.getElementById('hintPrev');
+    const hintNext         = document.getElementById('hintNext');
+
+    const leaves = Array.from(bookBlock.querySelectorAll('.leaf'));
+    const LAST   = leaves.length - 1;      
+    let turned     = 0;
+    let isTurning  = false;
+
+    leaves.forEach((lf, i) => { lf.style.zIndex = 500 - i; });
+
+    function turnDuration() {
+      const raw = getComputedStyle(bookOuter).getPropertyValue('--turn-ms');
+      const val = parseFloat(raw);
+      return isNaN(val) ? 950 : (raw.indexOf('ms') > -1 ? val : val * 1000);
+    }
+
+    function restoreZ() {
+      leaves.forEach((lf, i) => {
+        lf.style.zIndex = lf.classList.contains('flipped') ? (10 + i) : (500 - i);
+      });
+    }
+
+    function updateBookUI() {
+      bookPrevBtn.disabled = !isBookUnlocked || isTurning || turned === 0;
+      bookNextBtn.disabled = !isBookUnlocked || isTurning || turned >= LAST;
+      bookProgressBar.style.width = ((turned / LAST) * 100).toFixed(1) + '%';
+
+      /* Efek Buku Expand & Centering Lembar Ganda (Two Page Spread) */
+      if (turned > 0) {
+        bookStage.classList.add('is-open');
+      } else {
+        bookStage.classList.remove('is-open');
+      }
+
+      const remaining = LAST - turned;
+      bookStage.style.setProperty('--edge-l', (3 + turned * 2.6).toFixed(1) + 'px');
+      pageBlockEdge.style.setProperty('--edge-w', (3 + remaining * 2.6).toFixed(1) + 'px');
+
+      bookStage.classList.toggle('hints-done', turned >= 2);
+      hintPrev.classList.toggle('is-off', turned === 0);
+      hintNext.classList.toggle('is-off', turned >= LAST);
+      hintNext.textContent = turned === 0 ? 'Buka sampul ❯' : 'Halaman ❯';
+    }
+
+    function gateMessage() {
+      if (!isMusicPlayed) {
+        showToast("🎵 Putar musiknya dulu, Trus masukkan kunci emas ke gembok.");
+        playerCard3d.classList.add('highlight-pulse');
+      } else {
+        showToast("🔒 Masukkan kunci emas ke lubang gembok untuk membuka bukunya.");
+        padlockEl.classList.add('snap');
+        setTimeout(() => padlockEl.classList.remove('snap'), 400);
+      }
+    }
+
+    function turnNext() {
+      if (!isBookUnlocked) { gateMessage(); return; }
+      if (isTurning || turned >= LAST) return;
+
+      const leaf = leaves[turned];
+      isTurning = true;
+      updateBookUI();
+
+      leaf.style.zIndex = 960;
+      leaf.classList.add('turning');
+      gutterShadow.classList.add('deep');
+      requestAnimationFrame(() => leaf.classList.add('flipped'));
+      SFX.page();
+
+      setTimeout(() => {
+        leaf.classList.remove('turning');
+        gutterShadow.classList.remove('deep');
+        turned++;
+        isTurning = false;
+        restoreZ();
+        updateBookUI();
+      }, turnDuration());
+    }
+
+    function turnPrev() {
+      if (!isBookUnlocked) { gateMessage(); return; }
+      if (isTurning || turned === 0) return;
+
+      const leaf = leaves[turned - 1];
+      isTurning = true;
+      updateBookUI();
+
+      leaf.style.zIndex = 960;
+      leaf.classList.add('turning');
+      gutterShadow.classList.add('deep');
+      requestAnimationFrame(() => leaf.classList.remove('flipped'));
+      SFX.page();
+
+      setTimeout(() => {
+        leaf.classList.remove('turning');
+        gutterShadow.classList.remove('deep');
+        turned--;
+        isTurning = false;
+        restoreZ();
+        updateBookUI();
+      }, turnDuration());
+    }
+
+    bookNextBtn.addEventListener('click', turnNext);
+    bookPrevBtn.addEventListener('click', turnPrev);
+
+    let sx = 0, sy = 0, swiping = false;
+
+    bookStage.addEventListener('pointerdown', (e) => {
+      sx = e.clientX; sy = e.clientY; swiping = true;
+    });
+
+    bookStage.addEventListener('pointerup', (e) => {
+      if (!swiping) return;
+      swiping = false;
+      const dx = e.clientX - sx, dy = e.clientY - sy;
+
+      if (Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy)) {
+        (dx < 0) ? turnNext() : turnPrev();
+        return;
+      }
+      if (Math.hypot(dx, dy) < 11) {
+        const r = bookStage.getBoundingClientRect();
+        ((e.clientX - r.left) > r.width * 0.5) ? turnNext() : turnPrev();
+      }
+    });
+
+    bookStage.addEventListener('pointercancel', () => { swiping = false; });
+
+    document.addEventListener('keydown', (e) => {
+      if (!isBookUnlocked) return;
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const r = bookStage.getBoundingClientRect();
+      if (r.bottom < 60 || r.top > window.innerHeight - 60) return;
+      e.preventDefault();
+      (e.key === 'ArrowRight') ? turnNext() : turnPrev();
+    });
+
+    window.addEventListener('resize', placeKeyHome);
+    window.addEventListener('orientationchange', () => setTimeout(placeKeyHome, 250));
+    if (window.ResizeObserver) {
+      new ResizeObserver(() => placeKeyHome()).observe(bookOuter);
+    }
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => placeKeyHome());
+    }
+
+    /* =========================================================
+       9. SMART INTERSECTION BGM SWITCHER
+       ========================================================= */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (entry.target.classList.contains('hero')) {
+            if (!quizUnlocked) playAudio(bgm0);
+          } else if (entry.target.id === 'chapter1' && quizUnlocked && chapter2.classList.contains('locked')) {
+            playAudio(bgm1);
+          } else if (entry.target.id === 'chapter2' && !chapter2.classList.contains('locked')) {
+            playAudio(bgm2);
+          }
+        }
+      });
+    }, { threshold: 0.4 });
+
+    observer.observe(document.querySelector('.hero'));
+    observer.observe(document.getElementById('chapter1'));
+    observer.observe(document.getElementById('chapter2'));
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initFloatingElements();
+      initChapter0Audio();
+      placeKeyHome();
+      updateBookUI();
+      setTimeout(placeKeyHome, 400);
+    });
+
+    window.addEventListener('load', placeKeyHome);
+  </script>
+</body>
+</html>
